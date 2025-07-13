@@ -1,0 +1,282 @@
+<%- include("../partials/user/header") %>
+
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row">
+
+      <!-- Shipping Address -->
+      <div class="col-md-7 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0 fw-bold">Shipping Address</h5>
+              <a href="/address" class="btn btn-primary btn-sm">Add New Address</a>
+            </div>
+
+            <% userAddresses.forEach((address, index) => { %>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="selectedAddress" id="address<%= index %>" value="<%= address._id %>" <%= address.isDefault ? 'checked' : '' %>>
+                <label class="form-check-label" for="address<%= index %>">
+                  <div class="p-2 bg-white border rounded">
+                    <p class="mb-1"><strong><%= address.name %></strong> <%= address.addressType %></p>
+                    <p class="mb-1"><%= address.locality %>, <%= address.city %></p>
+                    <p class="mb-1"><%= address.state %></p>
+                    <p class="mb-1">Pin: <%= address.pincode %></p>
+                    <p class="mb-1"><small>Ph: <%= address.mobile %></small></p>
+                  </div>
+                </label>
+              </div>
+            <% }) %>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="col-md-5">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3">Your Order</h5>
+
+            <ul class="list-group mb-3">
+              <% cartItems.forEach(item => { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                  <div class="d-flex align-items-center">
+                    <img src="/uploads/product-images/<%= item.product.image?.[0] || 'default.jpg' %>" alt="product" width="50" height="50" class="me-2 rounded">
+                    <div>
+                      <strong><%= item.product.productName %></strong><br>
+                      <small class="text-muted">Qty: <%= item.quantity %></small>
+                    </div>
+                  </div>
+                  <span>₹<%= item.totalPrice %></span>
+                </li>
+              <% }) %>
+            </ul>
+            <% if (quantityAdjusted) { %>
+  <div class="alert alert-warning text-center">
+    Cart quantities were updated to match current stock.
+  </div>
+<% } %>
+
+
+            <!-- Apply Coupon -->
+            <div id="couponFormSection" style="<%= appliedCoupon ? 'display: none;' : '' %>">
+              <h6 class="fw-bold">Apply Coupon</h6>
+              <form id="couponForm" class="input-group mb-3">
+                <input type="text" class="form-control" name="couponCode" id="couponCodeInput" placeholder="Enter coupon code" style="height: 50px; margin-top: 15px;">
+                <button class="btn btn-primary" type="submit" style="height: 50px;">Apply</button>
+              </form>
+              <div id="couponError" class="text-danger small mb-2"></div>
+              <div id="couponSuccess" class="text-success small mb-2"></div>
+              <a href="#" class="text-decoration-none small" data-bs-toggle="modal" data-bs-target="#couponModal">View Coupons</a>
+            </div>
+
+            <!-- Coupon Modal -->
+            <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-sm">
+                  <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="couponModalLabel">Select a Coupon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <% coupons.forEach((coupon, i) => { %>
+                      <div class="form-check mb-3 border rounded px-3 py-2">
+                        <input class="form-check-input" type="radio" name="selectedCoupon" id="coupon<%= i %>" value="<%= coupon.couponName %>">
+                        <label class="form-check-label w-100" for="coupon<%= i %>">
+                          <div>
+                            <span class="fw-bold text-primary"><%= coupon.couponName %></span><br>
+                            <span class="text-success fw-semibold">₹<%= coupon.offerPrice %> Off</span>
+                            <span class="text-muted small"> on orders above ₹<%= coupon.minimumPrice %></span><br>
+                            <small class="text-warning">Expires on <%= coupon.endDate.toDateString() %></small>
+                          </div>
+                        </label>
+                      </div>
+                    <% }) %>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Clear Selection</button>
+                    <button class="btn btn-primary" id="applyCouponFromModal">Proceed</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Applied Coupon -->
+            <div id="appliedCouponSection" style="<%= appliedCoupon ? '' : 'display: none;' %>">
+              <p class="mb-1">Applied Coupon: <span id="appliedCouponName" class="fw-bold"><%= appliedCoupon %></span></p>
+              <button type="button" class="btn btn-danger btn-sm" id="removeCouponBtn" style="height: 30px;">Remove Coupon</button>
+            </div>
+
+            <hr class="my-2">
+
+            <div class="d-flex justify-content-between mb-1">
+              <span>Subtotal</span>
+              <strong>₹<%= subtotal %></strong>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span>Coupon Discount</span>
+              <strong class="text-success">(-) ₹<span id="discountAmount"><%= discount %></span></strong>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span>Shipping</span>
+              <strong>₹<%= shippingCharge %></strong>
+            </div>
+            <div class="mb-2">
+              <a href="/shipping-details" class="text-decoration-none small">View shipping charge</a>
+            </div>
+
+            <hr class="my-2">
+
+            <div class="d-flex justify-content-between mb-3">
+              <span>Total</span>
+              <strong id="grandTotal">₹<%= finalTotal %></strong>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Payment Method -->
+            <h6 class="fw-bold mb-2">Payment Method</h6>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay" value="razorpay">
+              <label class="form-check-label" for="razorpay">Online Payment</label>
+            </div>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="radio" name="paymentMethod" id="wallet" value="wallet">
+              <label class="form-check-label" for="wallet">Wallet Payment (Balance: ₹)</label>
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod" checked>
+              <label class="form-check-label" for="cod">Cash on Delivery</label>
+            </div>
+
+            <button class="btn btn-warning w-100" onclick="placeOrder()">Place Order</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+  document.getElementById('couponForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const code = document.getElementById('couponCodeInput').value;
+    try {
+      const res = await fetch('/apply-coupon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      const result = await res.json();
+
+      if (result.ok) {
+        document.getElementById('couponSuccess').innerText = result.msg;
+        document.getElementById('couponError').innerText = '';
+        document.getElementById('appliedCouponSection').style.display = 'block';
+        document.getElementById('appliedCouponName').innerText = result.couponName;
+        document.getElementById('couponFormSection').style.display = 'none';
+        document.getElementById('grandTotal').innerText = `₹${result.newTotal}`;
+        document.getElementById('discountAmount').innerText = result.discountAmount;
+      } else {
+        document.getElementById('couponError').innerText = result.msg;
+        document.getElementById('couponSuccess').innerText = '';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  document.getElementById('removeCouponBtn').addEventListener('click', async () => {
+    try {
+      const res = await fetch('/remove-coupon', { method: 'DELETE' });
+      const result = await res.json();
+      if (result.ok) {
+        document.getElementById('couponSuccess').innerText = result.msg;
+        document.getElementById('couponError').innerText = '';
+        document.getElementById('appliedCouponSection').style.display = 'none';
+        document.getElementById('couponFormSection').style.display = 'block';
+        document.getElementById('couponCodeInput').value = '';
+        document.getElementById('grandTotal').innerText = `₹${result.newTotal}`;
+        document.getElementById('discountAmount').innerText = '0';
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  document.getElementById('applyCouponFromModal').addEventListener('click', () => {
+    const selected = document.querySelector('input[name="selectedCoupon"]:checked');
+    if (!selected) return Swal.fire("No Coupon", "Please select a coupon", "info");
+
+    const code = selected.value;
+    const input = document.getElementById('couponCodeInput');
+    input.value = code;
+    document.getElementById('couponSuccess').innerText = 'Coupon ready — click Apply to activate.';
+    document.getElementById('couponError').innerText = '';
+    bootstrap.Modal.getInstance(document.getElementById('couponModal')).hide();
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => input.focus(), 300);
+  });
+
+  async function placeOrder() {
+    const address = document.querySelector('input[name="selectedAddress"]:checked')?.value;
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+    if (!address || !paymentMethod) {
+      return Swal.fire("Missing Info", "Please select address & payment method", "warning");
+    }
+
+    const res = await fetch('/place-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ selectedAddress: address, paymentMethod })
+    });
+
+    const data = await res.json();
+
+    if (paymentMethod === 'cod') {
+      if (data.status) window.location.href = `/order-success?orderId=${data.orderId}`;
+      else Swal.fire("Failed", data.message, "error");
+      return;
+    }
+
+    const options = {
+      key: data.key,
+      amount: data.amount,
+      currency: 'INR',
+      name: 'BookMart',
+      description: 'Secure payment',
+      image: '/images/bookmart-logo.png',
+      order_id: data.razorpayOrderId,
+      prefill: {
+        name: '<%= user.name %>',
+        email: '<%= user.email %>',
+        contact: '<%= user.mobile %>'
+      },
+      theme: { color: '#0d6efd' },
+      handler: async function (response) {
+        const verify = await fetch('/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...response, orderId: data.orderId })
+        }).then(r => r.json());
+
+        const url = verify.status ? '/order-success' : '/payment-failure';
+        window.location = `${url}?orderId=${data.orderId}`;
+      },
+      modal: {
+        ondismiss: function () {
+          window.location = `/payment-failure?orderId=${data.orderId}`;
+
+        }
+      }
+    };
+    new Razorpay(options).open();
+  }
+</script>
+
+<%- include("../partials/user/footer") %>

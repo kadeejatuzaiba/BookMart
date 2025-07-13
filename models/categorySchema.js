@@ -2,7 +2,7 @@ const mongoose=require('mongoose')
 const {Schema}=mongoose;
 
 
-const genreSchema = new mongoose.Schema({
+const categorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -13,6 +13,11 @@ const genreSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  categoryOffer: {
+  type: Number,
+  default: 0
+},
+
   isListed: {
     type: Boolean,
     default: true
@@ -21,13 +26,12 @@ const genreSchema = new mongoose.Schema({
     type: String,
     enum: ['Active', 'Inactive'],
     default: 'Active'
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
+}, {
+  timestamps: true // ✅ Automatically adds createdAt and updatedAt
 });
 
-const Genre = mongoose.model('Genre', genreSchema);
 
-module.exports = Genre;
+const Category = mongoose.model('Category', categorySchema);
+
+module.exports = Category;

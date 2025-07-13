@@ -22,6 +22,7 @@ const customerInfo = async (req, res) => {
           { email: { $regex: '.*' + search + '.*', $options: 'i' } }
         ],
       })
+      .sort({ createdAt: -1 })
         .limit(limit)
         .skip((page - 1) * limit)
         .exec();
@@ -39,12 +40,13 @@ const customerInfo = async (req, res) => {
       res.render('customers', {
         data: userData,
         currentPage: page,
-        totalPages: totalPages
+        totalPages: totalPages,
+        search: search
       });
     } catch (error) {
         console.log("s Error in customerInfo:", error.message);
   console.log(error); // Full stack trace
-  res.redirect('/pageerror')
+  res.redirect('/admin/pageerror')
     }
   };
   
@@ -55,7 +57,7 @@ const customerInfo = async (req, res) => {
         await User.updateOne({_id:id},{$set:{isBlocked:true}})
         res.redirect('/admin/users')
     } catch (error) {
-        res.redirect('/pageerror')
+        res.redirect('/admin/pageerror')
     }
   }
 
@@ -65,7 +67,7 @@ const customerInfo = async (req, res) => {
         await User.updateOne({_id: id},{$set:{isBlocked:false}})
         res.redirect('/admin/users')
     } catch (error) {
-       res.redirect('/pageerror') 
+       res.redirect('/admin/pageerror') 
     }
   }
 

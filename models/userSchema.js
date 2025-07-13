@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Category = require("./categorySchema");
 const {Schema} = mongoose;
 
 
@@ -39,14 +40,44 @@ const userSchema = new Schema({
        type: Boolean,
        default:false
    },
+  image: { type: String, default: '' },
+
+
    cart: [{
        type : Schema.Types.ObjectId,
        ref :"Cart"
    }],
-   wallet:{
-    type:Number,
-    default:0,
+//    wallet:{
+//     type:Number,
+//     default:0,
+// },
+
+
+
+
+wallet: {
+  balance: {
+    type: Number,
+    default: 0
+  },
+  transactions: [
+    {
+      type: {
+        type: String,
+        enum: ['credit', 'debit']
+      },
+      amount: Number,
+      description: String,
+      orderId: String,
+      date: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ]
 },
+
+
 wishlist:[{
     type:Schema.Types.ObjectId,
     ref:"Wishlist"
@@ -59,8 +90,14 @@ createdOn : {
     type:Date,
     default:Date.now,
 },
-referalCode:{
-    type:String
+referralCode: {
+  type: String,
+  unique: true,
+  required: false
+},
+referredBy: {
+  type: String,
+  default: null  // Will hold the referral code of the referrer
 },
 redeemed:{
     type:Boolean
@@ -70,9 +107,9 @@ redeemedUsers: [{
     ref:"User"
 }],
 searchHistory: [{
-    genre: {
+    category: {
         type: Schema.Types.ObjectId,
-        ref:"Genre",
+        ref:"Category",
     },
     language : {
         type : String
@@ -83,7 +120,10 @@ searchHistory: [{
     }
 }]
 
-})
+},{
+    timestamps:true
+}
+)
 
 
 

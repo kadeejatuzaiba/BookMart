@@ -1,6 +1,5 @@
 
 
-
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/userSchema');
@@ -26,7 +25,7 @@ async (accessToken, refreshToken, profile, done) => {  // ✅ changed 'Profiling
             return done(null, user);
         }
     } catch (error) {
-        return done(error, null);  // ✅ changed 'err' to 'error'
+        return done(error, null);  
     }
 }));
 

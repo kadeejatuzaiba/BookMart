@@ -1,0 +1,561 @@
+<%- include("../../views/partials/user/header") %>
+
+
+<!-- Slick Carousel CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+
+
+<style>
+  .detail-gallery {
+    position: relative;
+    padding-top: 60px;
+  }
+
+  .product-image-slider figure {
+    margin-bottom: 10px;
+  }
+
+  .slider-nav-thumbnails {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    overflow-x: auto;
+  }
+
+  .slider-nav-thumbnails img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    padding: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+  }
+
+  .slider-nav-thumbnails img:hover {
+    border-color: #007bff;
+    transform: scale(1.05);
+  }
+
+
+  /* zoom */
+
+  .zoom-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+#mainImage {
+  width: 100%;
+  display: block;
+}
+
+#zoomLens {
+  position: absolute;
+  border: 2px solid #000;
+  width: 200px;
+  height: 200px;
+  visibility: hidden;
+  cursor: crosshair;
+  background-repeat: no-repeat;
+  background-size: 200%;
+  pointer-events: none;
+}
+
+
+  .custom-add-cart:hover {
+    background-color: #d09667;
+  }
+  .btn-buynow:hover{
+    background-color:#dca910;
+  }
+ 
+   .wishlist-btn {
+    width: 80px;
+    height: 60px;
+    background-color: transparent;
+    border: 1px solid rgb(0, 0, 0);
+    color: rgb(255, 0, 0);
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .wishlist-btn:hover {
+    border: 1px solid red;
+    color: red;
+  }
+
+
+    .product-meta {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+  }
+
+  .product-meta li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .product-meta a {
+    color: #007bff;
+    text-decoration: none;
+    margin-right: 5px;
+  }
+
+  .product-meta a:hover {
+    text-decoration: underline;
+  }
+
+  .product-meta .in-stock {
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+
+.wishlist-but {
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  background-color: #fff;
+  border: none;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  transition: transform 0.2s ease;
+}
+
+.wishlist-but:hover {
+  transform: scale(1.1);
+}
+
+</style>
+
+
+
+<main class="main">
+<div class="page-header breadcrumb-wrap py-3 bg-light border-bottom">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a href="/" class="text-decoration-none text-primary">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="/shop" class="text-decoration-none text-primary">Shop</a>
+        </li>
+        <li class="breadcrumb-item active text-dark" aria-current="page">
+          Product Detail
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+ <section class="mt-50 mb-50">
+     <div class="container">
+         <div class="row">
+             <div class="col-lg-9">
+                 <div class="product-detail accordion-detail">
+                     <div class="row mb-50">
+                         <div class="col-md-6 col-sm-12 col-xs-12">
+                             <div class="detail-gallery">
+                      <div class="product-image-slider">
+
+  <div class="zoom-container">
+  <img id="mainImage" src="/uploads/product-images/<%= product.image[0] %>" alt="product image" class="img-fluid" />
+  <div id="zoomLens"></div>
+</div>
+
+</div>
+
+<div class="slider-nav-thumbnails">
+
+  <% product.image.forEach(img => { %>
+  <div class="thumb-img" onclick="changeImage('/uploads/product-images/<%= img %>')">
+    <img src="/uploads/product-images/<%= img %>" alt="thumbnail" class="img-thumbnail" />
+  </div>
+<% }) %>
+
+</div>
+                             </div>
+
+                            
+
+                         </div>
+                         <div class="col-md-6 col-sm-12 col-xs-12">
+                             <div class="detail-info">
+                                   <h2 class="fw-bold text-dark mb-3 display-6"><%= product.productName %></h2>
+                                 <div class="product-detail-rating">
+                                     <div class="pro-details-brand">
+                                         <span> Author: <a href="#"><%= product.author%></a></span>
+                                                                          
+                                     </div>
+                                     <div class="product-rate-cover text-end">
+                                         <div class="product-rate d-inline-block">
+                                             <div class="product-rating" style="width:90%">
+                                             </div>
+                                         </div>
+ <div class="mb-3">
+    <div class="d-flex align-items-center">
+      <div class="text-warning me-2">
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star-fill"></i>
+        <i class="bi bi-star-half"></i>
+      </div>
+      <small class="text-muted">(25 reviews)</small>
+    </div>
+  </div>
+                                     </div>
+                                 </div>
+                                 <div class="clearfix product-price-cover">
+                                    
+                    
+
+
+ <div class="item-price mb-2">
+  <span class="fw-bold text-success" style="font-size: 30px;">
+    ₹<%= salePrice %>
+  </span>
+
+  <% if (totalOffer > 0) { %>
+    <span class="text-muted text-decoration-line-through me-2">
+      ₹<%= product.regularPrice %>
+    </span>
+
+    <span class="save-price font-md text-primary ms-2">
+      <%= totalOffer %>% Offer
+    </span>
+  <% } else { %>
+    <span class="save-price font-md text-danger ms-2">
+      No Offers
+    </span>
+  <% } %>
+</div>
+
+
+                                 </div>
+                                 <div class="bt-1 border-color-1 mt-15 mb-15"></div>
+                                 <div class="short-desc mb-30">
+                                     <p><%=product.description%></p>
+                                 </div>
+                                 <div class="product_sort_info font-xs mb-30">
+                                     <ul>
+                                         <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year Brand Warranty</li>
+                                         <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
+                                         <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
+                                     </ul>
+                                 </div>
+                               
+                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+<% if (product.quantity > 0) { %>
+  <!-- In Stock: Show Quantity, Add to Cart, Wishlist, Buy Now -->
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <!-- Quantity Dropdown -->
+   <select id="quantity" class="form-select form-select-sm" style="width: 80px; height: 60px;"></select>
+
+<button class="btn w-100 custom-add-cart btn-primary" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
+
+    <!-- Wishlist -->
+    <button class="btn btn-sm d-flex align-items-center justify-content-center wishlist-btn"
+            title="Add to wishlist" onclick="addToWishlist('<%= product._id %>')">
+      <i class="bi bi-heart-fill"></i>
+    </button>
+  </div>
+
+  <!-- Buy Now Button -->
+  <!-- <div class="d-flex flex-column flex-sm-row gap-2">
+    <button class="btn btn-warning w-100 btn-buynow" onclick="buyNow('<%= product._id %>')">Buy Now</button>
+
+  </div> -->
+
+<% } else { %>
+  <!-- Out of Stock: Show unified layout -->
+  <div class="d-flex flex-column flex-sm-row gap-2 mb-3">
+    <button class="btn btn-secondary w-100" disabled>Out of Stock</button>
+  </div>
+<% } %>
+
+
+                                <ul class="product-meta">
+  <li>
+    <strong>Stock Code:</strong>
+    <a href="#">FWM15VKT</a>
+  </li>
+  <li>
+    <strong>Tags:</strong>
+    <a href="#" rel="tag">#Tag1</a>
+    <a href="#" rel="tag"><%= category.name %></a>
+  </li>
+  <li>
+    <strong>Availability:</strong>
+    <span class="in-stock text-success"><%= quantity %> Items in stock</span>
+  </li>
+</ul>
+                             </div>
+                         </div>
+                     </div>
+                    
+                 </div>
+             </div>
+         </div>
+     </div>
+ </section>
+
+
+<!-- Related Products -->
+<section class="mt-5 mb-5">
+  <div class="container">
+    <h2 class="mb-4 fw-bold">Related Products</h2>
+    <div class="row">
+      <% if (relatedProducts && relatedProducts.length > 0) { %>
+        <% relatedProducts.forEach(product => { %>
+          <div class="col-md-4 mb-4">
+            <div class="product-item border rounded p-3 text-center shadow-sm position-relative">
+
+              <!-- Heart Button -->
+              <button type="button" onclick="addToWishlist('<%=product._id%>')"
+        class="btn  position-absolute top-0 end-0 m-2 shadow-sm add-to-wishlist" 
+        data-id="<%= product._id %>" 
+        title="Add to Wishlist">
+  ❤️
+</button>
+
+              <figure class="product-style">
+                <a href="/productDetails?id=<%= product._id %>">
+                  <% if (product.image && product.image.length > 0) { %>
+                    <img src="/uploads/product-images/<%= product.image[0] %>" 
+                         alt="<%= product.productName %>" 
+                         class="img-fluid mb-3" 
+                         style="height: 250px; object-fit: cover;">
+                  <% } else { %>
+                    <img src="/images/default-book.jpg" 
+                         alt="No image available" 
+                         class="img-fluid mb-3" 
+                         style="height: 250px; object-fit: cover;">
+                  <% } %>
+                </a>
+              </figure>
+
+              <figcaption class="mt-3">
+                <h3><%= product.productName %></h3>
+                <p class="text-muted mb-1"><%= product.author %></p>
+
+                <% if (product.category && product.category.name) { %>
+                  <h6 class="text-muted small mb-2">Category: <%= product.category.name %></h6>
+                <% } %>
+
+          
+                <div class="d-flex justify-content-center gap-2">
+                   <button type="button" onclick="addToCart('<%=product._id%>')"
+                                      class="btn btn-small btn-accent btn-pill add-to-cart" 
+                                      data-id="<%= product._id %>">
+                                <i class="fa fa-shopping-cart me-1"></i> Add to Cart
+                              </button>
+                </div>
+              </figcaption>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="col-12 text-center">
+          <p>No related products found.</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+
+</main>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Slick Carousel JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+
+<script>
+  $(document).ready(function(){
+    $('.product-image-slider').slick({
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      arrows: false,
+      fade: true,
+      asNavFor: '.slider-nav-thumbnails'
+    });
+
+    $('.slider-nav-thumbnails').slick({
+      slidesToShow: 4,
+      slidesToScroll: 1,
+      asNavFor: '.product-image-slider',
+      dots: false,
+      centerMode: false,
+      focusOnSelect: true
+    });
+  });
+</script>
+
+<script>
+  const mainImage = document.getElementById('mainImage');
+  const lens = document.getElementById('zoomLens');
+
+  // When mouse enters main image
+  mainImage.addEventListener('mouseenter', () => {
+    lens.style.visibility = 'visible';
+    lens.style.backgroundImage = `url(${mainImage.src})`;
+    lens.style.backgroundSize = `${mainImage.offsetWidth * 2}px ${mainImage.offsetHeight * 2}px`;
+  });
+
+  // When mouse leaves main image
+  mainImage.addEventListener('mouseleave', () => {
+    lens.style.visibility = 'hidden';
+  });
+
+  // When mouse moves on main image
+  mainImage.addEventListener('mousemove', function (e) {
+    const rect = mainImage.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const lensWidth = lens.offsetWidth;
+    const lensHeight = lens.offsetHeight;
+
+    let left = x - lensWidth / 2;
+    let top = y - lensHeight / 2;
+
+    // Make sure the lens stays inside the image
+    left = Math.max(0, Math.min(left, mainImage.offsetWidth - lensWidth));
+    top = Math.max(0, Math.min(top, mainImage.offsetHeight - lensHeight));
+
+    lens.style.left = `${left}px`;
+    lens.style.top = `${top}px`;
+
+    // Move the background (zoomed image)
+    const zoomLevel = 2;
+    const bgX = -left * zoomLevel;
+    const bgY = -top * zoomLevel;
+
+    lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+  });
+
+  // When thumbnail is clicked
+  function changeImage(src) {
+    mainImage.src = src;
+    mainImage.onload = () => {
+      lens.style.backgroundImage = `url(${src})`;
+      lens.style.backgroundSize = `${mainImage.offsetWidth * 2}px ${mainImage.offsetHeight * 2}px`;
+    };
+  }
+</script>
+
+
+
+
+<script>
+  function changeImage(src) {
+    const mainImage = document.getElementById('mainImage');
+    const lens = document.getElementById('zoomLens');
+    mainImage.src = src;
+
+    // Wait until image is fully loaded, then update zoom background
+    mainImage.onload = () => {
+      lens.style.backgroundImage = `url(${src})`;
+    };
+  }
+
+
+</script>
+<script>
+  const qtyDropdown = document.getElementById('quantity');
+  for (let i = 1; i <= 5; i++) {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = i;
+    qtyDropdown.appendChild(option);
+  }
+</script>
+
+<script>
+//   function addToCart(productId) {
+//   const quantity = document.getElementById('quantity').value;
+
+//   $.post('/addToCart', { productId, quantity }, (res) => {
+//     Swal.fire({
+//       title: res.status ? "Added to Cart" : "Failed",
+//       text: res.message,
+//       icon: res.status ? "success" : "info",
+//       timer: 2000
+//     });
+//   }).fail(() => {
+//     Swal.fire({
+//       title: "Error",
+//       text: "Try again later",
+//       icon: "error",
+//       timer: 2000
+//     });
+//   });
+// }
+
+
+
+function addToCart(productId) {
+  $.ajax({
+    url: '/addToCart',
+    method: 'POST',
+    data: { productId, quantity: 1 },  // ✅ Add quantity = 1
+    success: (response) => {
+      Swal.fire({
+        title: "Added to Cart",
+        text: response.message,
+        icon: 'success',
+        timer: 2000
+      });
+    },
+    error: (xhr) => {
+      const res = xhr.responseJSON;
+      Swal.fire({
+        title: "Failed",
+        text: res?.message || "Something went wrong. Please try again.",
+        icon: 'info',
+        timer: 2000
+      });
+    }
+  });
+}
+
+ 
+
+  function addToWishlist(productId) {
+    $.post('/addToWishlist', { productId }, (res) => {
+      Swal.fire({
+        title: res.status ? "Added to Wishlist" : "Info",
+        text: res.message,
+        icon: res.status ? "success" : "info",
+        timer: 2000
+      });
+    });
+  }
+</script>
+
+
+<%- include("../../views/partials/user/footer") %>

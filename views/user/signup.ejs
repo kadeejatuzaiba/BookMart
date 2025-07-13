@@ -1,415 +1,669 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BookMart - Sign Up</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - BookMart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Roboto', sans-serif;
     }
 
     body, html {
       height: 100%;
-      width: 100%;
-    }
-
-    .main-container {
-        background-color: rgb(254, 245, 234);
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f8f6f1 0%, #f0ede6 50%, #e8e4db 100%);
       display: flex;
-      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
 
-   
+    .signup-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      overflow: hidden;
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      min-height: 600px;
+    }
 
-
-    .left {
+    .left-section {
       flex: 1;
-     
-      position: relative;
+      background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 2rem;
       color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(212, 165, 116, 0.1), transparent);
+      z-index: 1;
+    }
+
+    .brand-content {
+      text-align: center;
+      z-index: 2;
+      position: relative;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #d4a574, #c19653);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 10px 30px rgba(212, 165, 116, 0.3);
     }
 
-    .left h1 {
-      font-size: 36px;
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 20px 30px;
-      border-radius: 10px;
-      text-align: center;
-      text-shadow: 1px 1px 5px #000;
+    .logo i {
+      font-size: 2rem;
+      color: white;
     }
-    .right {
-  flex: 1;
-  height: 100vh; /* Ensures it takes the full viewport height */
- 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  background-size: cover;  /* Ensures the background image covers the section */
-}
 
-.form-container {
-  width: 100%;
-  max-width: 400px;
-  background-color: rgba(207, 175, 163, 0.967); /* Adding slight transparency */
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
+    .brand-name {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+    }
 
+    .brand-tagline {
+      font-size: 1rem;
+      opacity: 0.9;
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
 
-    h2 {
+    .welcome-text h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-text p {
+      font-size: 1rem;
+      opacity: 0.8;
+      font-weight: 300;
+    }
+
+    .right-section {
+      flex: 1.2;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .signup-header {
       text-align: center;
-      margin-bottom: 20px;
-      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    .signup-header h3 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #2d2d2d;
+      margin-bottom: 0.5rem;
+    }
+
+    .signup-header p {
+      color: #6b6b6b;
+      font-size: 0.95rem;
     }
 
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 1rem;
+      position: relative;
     }
 
-    .form-label {
-      font-weight: 500;
-      margin-bottom: 5px;
+    .form-group label {
       display: block;
-      font-size: 14px;
+      margin-bottom: 0.5rem;
+      color: #2d2d2d;
+      font-weight: 500;
+      font-size: 0.9rem;
     }
 
-    .form-control {
+    .input-wrapper {
+      position: relative;
+    }
+
+    .form-input {
       width: 100%;
-      padding: 10px;
-      font-size: 15px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 12px 14px 12px 40px;
+      border: 2px solid #e8e4db;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: #fafafa;
     }
 
-    .btn {
+    .form-input:focus {
+      outline: none;
+      border-color: #d4a574;
+      box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+      background: white;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9b9b9b;
+      font-size: 0.9rem;
+    }
+
+    .error-message {
+      color: #ec1a1a;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .signup-btn {
       width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .btn-primary {
-      background-color: #007bff;
+      padding: 14px;
+      background: linear-gradient(135deg, #d4a574, #c19653);
       color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 1rem 0;
     }
 
-    .btn-primary:hover {
-      background-color: #0056b3;
+    .signup-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(212, 165, 116, 0.3);
+    }
+
+    .signup-btn:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      position: relative;
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #e8e4db;
+    }
+
+    .divider span {
+      background: white;
+      padding: 0 1rem;
+      color: #6b6b6b;
+      font-size: 0.85rem;
     }
 
     .google-btn {
-      background-color: #db4437;
-      color: white;
+      width: 100%;
+      padding: 12px;
+      background: white;
+      color: #2d2d2d;
+      border: 2px solid #e8e4db;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 15px;
-    }
-
-    .google-btn i {
-      margin-right: 10px;
-    }
-
-    .form-text {
-      font-size: 13px;
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .form-text a {
-      color: #007bff;
+      margin-bottom: 1rem;
       text-decoration: none;
     }
 
-    .form-text a:hover {
+    .google-btn:hover {
+      border-color: #d4a574;
+      background: #fafafa;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    .google-btn i {
+      margin-right: 0.5rem;
+      color: #ea4335;
+    }
+
+    .login-link {
+      text-align: center;
+      color: #6b6b6b;
+      font-size: 0.95rem;
+    }
+
+    .login-link a {
+      color: rgba(0, 0, 255, 0.825);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: blue;
       text-decoration: underline;
     }
 
+    .server-error {
+      background: #fee;
+      color: #ec1a1a;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
     @media (max-width: 768px) {
-      .main-container {
+      body {
+        padding: 10px;
+        align-items: flex-start;
+        padding-top: 20px;
+      }
+
+      .signup-container {
         flex-direction: column;
-      }
-
-      .left, .right {
-        flex: unset;
+        max-width: 450px;
+        min-height: auto;
         width: 100%;
-        height: 50%;
       }
 
-      .left h1 {
-        font-size: 24px;
+      .left-section {
+        padding: 1.5rem;
+        min-height: 150px;
+        flex: none;
+      }
+
+      .right-section {
+        padding: 1.5rem;
+        flex: none;
+        max-height: none;
+        overflow-y: visible;
+      }
+
+      .brand-name {
+        font-size: 1.8rem;
+      }
+
+      .welcome-text h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.3rem;
+      }
+
+      .welcome-text p {
+        font-size: 0.9rem;
+      }
+
+      .signup-header {
+        margin-bottom: 1rem;
+      }
+
+      .signup-header h3 {
+        font-size: 1.4rem;
+      }
+
+      .signup-header p {
+        font-size: 0.85rem;
+      }
+
+      .form-group {
+        margin-bottom: 0.8rem;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .form-input {
+        padding: 12px 14px 12px 40px;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+
+      .signup-btn, .google-btn {
+        padding: 14px;
+        font-size: 16px;
+      }
+
+      .logo {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1rem;
+      }
+
+      .logo i {
+        font-size: 1.5rem;
+      }
+
+      .brand-tagline {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
       }
     }
 
-    .error-message{
-      color:red;
-      font-size: 0.75rem;
-      display: none;
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
 
+      .signup-container {
+        border-radius: 15px;
+        max-width: 100%;
+      }
+
+      .left-section {
+        padding: 1.2rem;
+        min-height: 120px;
+      }
+
+      .right-section {
+        padding: 1.2rem;
+      }
+
+      .brand-name {
+        font-size: 1.6rem;
+      }
+
+      .welcome-text h2 {
+        font-size: 1.2rem;
+      }
+
+      .signup-header h3 {
+        font-size: 1.3rem;
+      }
+
+      .form-input {
+        padding: 10px 12px 10px 35px;
+      }
+
+      .input-icon {
+        left: 10px;
+        font-size: 0.85rem;
+      }
+
+      .logo {
+        width: 50px;
+        height: 50px;
+      }
+
+      .logo i {
+        font-size: 1.3rem;
+      }
     }
 
+    @media (max-width: 360px) {
+      .signup-container {
+        margin: 5px;
+      }
 
+      .left-section {
+        padding: 1rem;
+      }
+
+      .right-section {
+        padding: 1rem;
+      }
+
+      .form-input {
+        font-size: 14px;
+        padding: 10px 12px 10px 32px;
+      }
+
+      .signup-btn, .google-btn {
+        padding: 12px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="main-container">
+  <div class="signup-container">
+    <div class="left-section">
+      <div class="brand-content">
+        <div class="logo">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <div class="brand-name">BookMart</div>
+        <div class="brand-tagline">Your Gateway to Knowledge</div>
+        
+        <div class="welcome-text">
+          <h2>Join Us Today!</h2>
 
-
-    <div class="left">
-      <div style="text-align: center;">
-        <h1 style="margin-bottom: 10px;">Welcome to BookMart!</h1>
-        <p style="font-size: 18px; color: #3b3939;">Let’s get you signed up..!</p>
+        </div>
       </div>
     </div>
-    
 
-    <div class="right">
-      <div class="form-container">
-        <h2>Sign Up</h2>
-        <form id="signform" action="/signup" method="POST">
-          <div class="form-group">
-            <label class="form-label" for="name">Full Name</label>
-            <input type="text" class="form-control" id="name" name="name"  />
-          
+    <div class="right-section">
+      <div class="signup-header">
+        <h3>Sign Up</h3>
+        <p>Create your BookMart account</p>
+      </div>
+
+      <form id="signform" action="/signup" method="POST">
+        <% if(locals.message && message.length > 0) { %>
+          <div class="server-error"><%= message %></div>
+        <% } %>
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <div class="input-wrapper">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" class="form-input" id="name" name="name" placeholder="Enter your full name" />
+          </div>
           <div id="error1" class="error-message"></div>
-          
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" class="form-input" id="email" name="email" placeholder="Enter your email" />
           </div>
-          <div class="form-group">
-            <label class="form-label" for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email"  />
-         
-            <div id="error2" class="error-message"></div>
+          <div id="error2" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <div class="input-wrapper">
+            <i class="fas fa-phone input-icon"></i>
+            <input type="tel" class="form-input" id="phone" name="phone" placeholder="Enter your phone number" />
           </div>
+          <div id="error3" class="error-message"></div>
+        </div>
+
+        <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="phone">Phone Number</label>
-            <input type="tel" class="form-control" id="phone" name="phone"  />
-          
-            <div id="error3" class="error-message"></div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password"  />
-         
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" class="form-input" id="password" name="password" placeholder="Create password" />
+            </div>
             <div id="error4" class="error-message"></div>
           </div>
+
           <div class="form-group">
-            <label class="form-label" for="confirmPassword">Confirm Password</label>
-            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"  />
-         
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" />
+            </div>
             <div id="error5" class="error-message"></div>
           </div>
-
-
-
-          
-        <% if(locals.message && message.length > 0) { %>
-          <div style="color: red; text-align: center;">
-              <%= message %>
-          </div>
-      <% } %>
-
-
-
-          <button type="submit" class="btn btn-primary">Sign Up</button>
-        </form>
-        <div class="btn google-btn" onclick="window.location.href='/auth/google'">
-
-          
-          <a href="/auth/google" style="text-decoration: none; color: inherit;">
-            <i class="fab fa-google"></i> Sign Up with Google
-          </a>
-          
         </div>
-        <div class="form-text">
-          Already have an account? <a href="/login">Login here</a>
-        </div>
+
+        <button type="submit" class="signup-btn">
+          Create Account
+        </button>
+      </form>
+
+
+      <a href="/auth/google" class="google-btn">
+        <i class="fab fa-google"></i>
+        Sign up with Google
+      </a>
+
+      <div class="login-link">
+        Already have an account? <a href="/login">Login here</a>
       </div>
     </div>
   </div>
 
-
-
   <script>
-    
     const nameid = document.getElementById('name');
     const emailid = document.getElementById('email');
     const phoneid = document.getElementById('phone');
     const passid = document.getElementById('password');
     const cpassid = document.getElementById('confirmPassword');
   
-    const error1=document.getElementById('error1')
-    const error2=document.getElementById('error2')
-    const error3=document.getElementById('error3')
-    const error4=document.getElementById('error4')
-    const error5=document.getElementById('error5')
+    const error1 = document.getElementById('error1');
+    const error2 = document.getElementById('error2');
+    const error3 = document.getElementById('error3');
+    const error4 = document.getElementById('error4');
+    const error5 = document.getElementById('error5');
 
-    const signform=document.getElementById('signform')
+    const signform = document.getElementById('signform');
 
-  function nameValidateChecking(e){
-const nameval=nameid.value;
-const namepattern=/^[A-Za-z\s]+$/;
+    function nameValidateChecking() {
+      const nameval = nameid.value;
+      const namepattern = /^[A-Za-z\s]+$/;
 
-if(nameval.trim()===''){
-  error1.style.display='block'
-  error1.innerHTML='Please enter a valid name'
-}else if(!namepattern.test(nameval)){
-  error1.style.display='block'
-  error1.innerHTML="Name can only contain alphabets and spaces"
-}else{
-  error1.style.display='none';
-  error1.innerHTML=''
-}
+      if (nameval.trim() === '') {
+        error1.style.display = 'block';
+        error1.innerHTML = 'Please enter a valid name';
+      } else if (!namepattern.test(nameval)) {
+        error1.style.display = 'block';
+        error1.innerHTML = "Name can only contain alphabets and spaces";
+      } else {
+        error1.style.display = 'none';
+        error1.innerHTML = '';
+      }
+    }
 
-  }
+    function emailValidateChecking() {
+      const emailval = emailid.value;
+      const emailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+      if (emailval.trim() === '') {
+        error2.style.display = 'block';
+        error2.innerHTML = 'Please enter a valid email address';
+      } else if (!emailpattern.test(emailval)) {
+        error2.style.display = 'block';
+        error2.innerHTML = 'Please enter a valid email (e.g. user@example.com)';
+      } else {
+        error2.style.display = 'none';
+        error2.innerHTML = '';
+      }
+    }
 
+    function phoneValidateChecking() {
+      const phoneval = phoneid.value;
 
-  function emailValidateChecking(e) {
-  const emailval = emailid.value;
-  const emailpattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (phoneval.trim() === '') {
+        error3.style.display = 'block';
+        error3.innerHTML = 'Please enter a phone number';
+      } else if (phoneval.length !== 10) {
+        error3.style.display = 'block';
+        error3.innerHTML = 'Phone number must be exactly 10 digits';
+      } else if (!/^[0-9]{10}$/.test(phoneval)) {
+        error3.style.display = 'block';
+        error3.innerHTML = 'Phone number can only contain digits';
+      } else {
+        error3.style.display = 'none';
+        error3.innerHTML = '';
+      }
+    }
 
-  if (emailval.trim() === '') {
-    error2.style.display = 'block';
-    error2.innerHTML = 'Please enter a valid email address';
-  } else if (!emailpattern.test(emailval)) {
-    error2.style.display = 'block';
-    error2.innerHTML = 'Please enter a valid email (e.g. user@example.com)';
-  } else {
-    error2.style.display = 'none';
-    error2.innerHTML = '';
-  }
-}
+    function passValidateChecking() {
+      const passval = passid.value;
+      const cpassval = cpassid.value;
 
+      const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
-
-function phoneValidateChecking(e) {
-  const phoneval = phoneid.value;
-
-  if (phoneval.trim() === '') {
-    error3.style.display = 'block';
-    error3.innerHTML = 'Please enter a phone number';
-  } else if (phoneval.length !== 10) {
-    error3.style.display = 'block';
-    error3.innerHTML = 'Phone number must be exactly 10 digits';
-  } else if (!/^[0-9]{10}$/.test(phoneval)) {
-    error3.style.display = 'block';
-    error3.innerHTML = 'Phone number can only contain digits';
-  } else {
-    error3.style.display = 'none';
-    error3.innerHTML = '';
-  }
-}
-
-
-// function passValidateChecking(e){
-//   const passval=passid.value
-//   const cpassval=cpassid.value
-//   const alpha=/[a-zA-Z]/
-//   const digit=/\d/
-//   if(passval.length<8){
-//     error4.style.display='block'
-//     error4.innerHTML="Should contain atleast 8 characters"
-//   }else if(!alpha.test(passval) || !digit.test(passval)){
-//     error4.style.display='block'
-//     error4.innerHTML='Should contain numbers and alphabets'
-//   }else{
-//     error4.style.display='none'
-//     error4.innerHTML=''
-//   }
-
-//   if(passval !== cpassval){
-//     error5.style.display='block'
-//     error5.innerHTML='Passwords do not match'
-//   }else{
-//     error5.style.display='none'
-//     error5.innerHTML=''
-//   }
-// }
-
-function passValidateChecking(e) {
-  const passval = passid.value;
-  const cpassval = cpassid.value;
-
-  const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-  if (!strongPassword.test(passval)) {
-    error4.style.display = 'block';
-    error4.innerHTML = "Password must be 8+ characters, include uppercase, lowercase, number & special character";
-  } else {
-    error4.style.display = 'none';
-    error4.innerHTML = '';
-  }
-
-  if (passval !== cpassval) {
-    error5.style.display = 'block';
-    error5.innerHTML = 'Passwords do not match';
-  } else {
-    error5.style.display = 'none';
-    error5.innerHTML = '';
-  }
-}
-
-
-
-   document.addEventListener('DOMContentLoaded',function(){
-   
-    signform.addEventListener('submit',function(e){
-
-      nameValidateChecking();
-      emailValidateChecking();
-      phoneValidateChecking();
-      passValidateChecking();
-
-
-      if(
-        !nameid ||
-        !emailid ||
-        !phoneid ||
-        !passid ||
-        !error1 ||
-        !error2 ||
-        !error3 ||
-        !error4 ||
-        !error5 ||
-        !signform
-      ){
-        console.error('One or more elements not found')
+      if (!strongPassword.test(passval)) {
+        error4.style.display = 'block';
+        error4.innerHTML = "Password must be 8+ characters, include uppercase, lowercase, number & special character";
+      } else {
+        error4.style.display = 'none';
+        error4.innerHTML = '';
       }
 
-      if(
-        error1.innerHTML ||
-        error2.innerHTML ||
-        error3.innerHTML ||
-        error4.innerHTML ||
-        error5.innerHTML 
-      ){
-e.preventDefault()
+      if (passval !== cpassval && cpassval !== '') {
+        error5.style.display = 'block';
+        error5.innerHTML = 'Passwords do not match';
+      } else {
+        error5.style.display = 'none';
+        error5.innerHTML = '';
       }
+    }
 
+    document.addEventListener('DOMContentLoaded', function() {
+      signform.addEventListener('submit', function(e) {
+        nameValidateChecking();
+        emailValidateChecking();
+        phoneValidateChecking();
+        passValidateChecking();
 
-    })
-   })
-    
+        if (
+          error1.innerHTML ||
+          error2.innerHTML ||
+          error3.innerHTML ||
+          error4.innerHTML ||
+          error5.innerHTML 
+        ) {
+          e.preventDefault();
+        }
+      });
+
+      // Real-time validation
+      nameid.addEventListener('blur', nameValidateChecking);
+      emailid.addEventListener('blur', emailValidateChecking);
+      phoneid.addEventListener('blur', phoneValidateChecking);
+      passid.addEventListener('input', passValidateChecking);
+      cpassid.addEventListener('input', passValidateChecking);
+    });
   </script>
-  
-
-
-
-
 </body>
 </html>

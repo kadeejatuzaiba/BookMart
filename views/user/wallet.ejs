@@ -1,0 +1,81 @@
+<%- include('../partials/user/profileHeader') %>
+
+<div class="container mt-1">
+  <!-- Wallet Header -->
+<h2 class="fw-bold mb-4">Wallet & Transactions</h2>
+
+<!-- Wallet Section -->
+<div class="d-flex flex-column align-items-center mb-4">
+
+  <!-- Wallet Balance Box -->
+  <div class="card text-center p-4 shadow" style="width: 500px; background-color: #3a3f51; border-radius: 15px; color: #ffffff;">
+    <div>
+      <h1 class="display-6 fw-bold mb-1" style="color: #ffffff;">
+        ₹ <%= (user.wallet && user.wallet.balance) ? user.wallet.balance.toFixed(2) : '0.00' %>
+      </h1>
+      <p class="mb-0" style="font-size: 14px; color: #a5d6a7;">Available Balance</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="d-flex justify-content-center gap-3 mt-3">
+    <button class="btn btn-dark px-4 py-2 rounded shadow-sm" style="height: 40px;">
+      <i class="bi bi-plus-lg"></i> Add Balance
+    </button>
+    <button class="btn btn-dark px-4 py-2 rounded shadow-sm" style="height: 40px;">
+      <i class="bi bi-dash-lg"></i> Withdraw
+    </button>
+  </div>
+
+</div>
+
+
+  <!-- Transaction History -->
+<h4 class="fw-bold mb-3">Transaction History</h4>
+
+<div class="table-responsive">
+  <table class="table table-bordered text-center align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Amount</th>
+        <th>Purpose</th>
+        <th>Date</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+<% if (!transactions || transactions.length === 0) { %>
+  <tr>
+    <td colspan="4" class="text-muted">No transactions yet.</td>
+  </tr>
+<% } else { %>
+  <% transactions.forEach(tx => { %>
+    <tr>
+      <td>₹<%= tx.amount.toFixed(2) %></td>
+      <td><%= tx.description %></td>
+      <td><%= new Date(tx.date).toLocaleDateString('en-IN') %></td>
+      <td>
+        <span class="badge <%= tx.type === 'credit' ? 'bg-success' : 'bg-danger' %>">
+          <%= tx.type.charAt(0).toUpperCase() + tx.type.slice(1) %>
+        </span>
+      </td>
+    </tr>
+  <% }) %>
+<% } %>
+
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Wallet pagination">
+  <ul class="pagination justify-content-center">
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+
+<%- include('../partials/user/profileFooter') %>

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const {Schema}=mongoose;
 
 const productSchema = new Schema({
-  name: {
+  productName: {
     type: String,
     required: true,
     trim: true
@@ -26,18 +26,18 @@ const productSchema = new Schema({
   quantity: {
     type: Number,
     required: true,
-    default: 1
+
   },
-  genre: {
+  category: {
     type: Schema.Types.ObjectId,
-    ref: 'Genre',
+    ref: 'Category',
     required: true
   },
   image: {
     type: [String],
     required: true
   },
-  offer: {
+  productOffer: {
     type: Number,
     default: 0
   },

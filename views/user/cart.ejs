@@ -1,0 +1,116 @@
+<%- include('../partials/user/header') %>
+
+<main class="main">
+
+<div class="page-header breadcrumb-wrap py-3 bg-light border-bottom">
+  <div class="container">
+                                       
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item">
+          <a href="/" class="text-decoration-none text-primary">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="/shop" class="text-decoration-none text-primary">Shop</a>
+        </li>
+        <li class="breadcrumb-item active text-dark" aria-current="page">
+          Cart
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+
+
+
+  <div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4">My Cart</h2>
+
+    <% if (items.length) { %>
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Total</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% items.forEach(i => { const p = i.productId; %>
+              <tr>
+                <td>
+                  <img src="/uploads/product-images/<%= p.image[0] %>"
+                       style="width:70px;height:70px;object-fit:cover;">
+                </td>
+                <td><%= p.productName %></td>
+                <td><%= p.category.name %></td>
+                <td>₹<%= p.salePrice %></td>
+
+                <td>
+                  <div class="d-flex justify-content-center align-items-center">
+                    <form action="/decrease-quantity/<%= i._id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">-</button>
+                    </form>
+                    <span class="mx-2"><%= i.quantity %></span>
+                    <form action="/increase-quantity/<%= i._id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">+</button>
+                    </form>
+                  </div>
+                </td>
+
+
+                <td>₹<%= p.salePrice * i.quantity %></td>
+                <td>
+                  
+                    <button class="btn btn-sm btn-outline-danger" style="height: 40px;margin-bottom: 10px;" onclick="confirmRemove('<%=p._id%>')">Remove</button>
+             
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Cart Total Section -->
+      <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+          <div class="card p-4 text-center shadow-sm">
+            <h4>Cart Total: ₹<%= total %></h4>
+            <a href="/checkout" class="btn btn-warning mt-3">Proceed to Checkout</a>
+          </div>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="alert alert-info text-center">
+        Your cart is empty. <a href="/shop">Continue shopping</a>.
+      </div>
+    <% } %>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+     function confirmRemove(productId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you want to remove this item from your cart?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#999',
+      confirmButtonText: 'Yes, remove it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href=`/removeFromCart?productId=${productId}`
+      }
+    });
+  }
+
+</script>
+<%- include('../partials/user/footer') %>

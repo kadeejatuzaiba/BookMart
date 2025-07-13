@@ -16,7 +16,7 @@ Version: 1.1
 :root {
   /* widths for rows and containers
      */
-  --header-height: 160px;
+  --header-height: 16s0px;
   --header-height-min: 80px;
 }
 
@@ -796,14 +796,14 @@ td:last-child {
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 button,
 .button {
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 input,
 textarea,
 select,
 fieldset {
-  margin-bottom: 1.5rem;
+  margin-bottom:0;
 }
 
 pre,
@@ -815,7 +815,7 @@ p,
 ul,
 ol,
 form {
-  margin-bottom: 2.5rem;
+  margin-bottom: 0;
 }
 
 /*------------------------------------------------
@@ -956,6 +956,7 @@ fieldset[disabled] a.btn {
 .btn.btn-small {
   padding: 0.325em 1.7em;
   font-size: 0.65em;
+  height: 60px;
 }
 
 .btn.btn-medium {
@@ -1848,6 +1849,7 @@ img.post-image {
 /* - Main Navigation
 ------------------------------------------------------------- */
 #header {
+  
   padding: 20px 0;
   border-bottom: 1px solid #E0E0E0;
   background-color: #f3f2ec;
@@ -2225,8 +2227,7 @@ span.prev-price {
 
 /*----- Latest Blog Section
 --------------------------------------------------------------*/
-#latest-blog {
-}
+
 
 #latest-blog article.column {
   margin-bottom: 60px;
