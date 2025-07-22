@@ -87,7 +87,7 @@
       <input type="text" id="otp" name="otp" placeholder="Enter OTP" maxlength="6" required>
       <button type="submit">Verify Email</button>
     </form>
-    <div class="timer" id="timer">Resend OTP in 30s</div>
+    <div class="timer" id="timer">Resend OTP in 60s</div>
     <button class="resend-btn" id="resendBtn" onclick="resendOTP()" disabled>Resend OTP</button>
     <div class="login-link">
       Already verified? <a href="/login">Login now</a>
@@ -95,7 +95,7 @@
   </div>
 
   <script>
-    let timeLeft = 30;
+    let timeLeft = 60;
     const timerEl = document.getElementById('timer');
     const resendBtn = document.getElementById('resendBtn');
 
@@ -111,7 +111,7 @@
 
     resendBtn.addEventListener('click', () => {
       resendBtn.disabled = true;
-      timeLeft = 30;
+      timeLeft = 60;
       timerEl.textContent = `Resend OTP in ${timeLeft}s`;
       // call backend here (AJAX or form submit)
       const again = setInterval(() => {
@@ -165,38 +165,6 @@
     }
 
     
-
-    // function resendOTP(){
-    //     clearInterval(countdown);
-    //     time=60;
-    //     document.getElementById('otp').disabled=false;
-    //     document.getElementById('timervalue').classList.remove('expired')
-    //     countdown()
-    //     $.ajax({
-    //         type:'POST',
-    //         url:'/resend-otp',
-    //         success:function(response){
-    //             if(response.success){
-    //                 Swal.fire({
-    //                 icon:'success',
-    //                 title:"OTP Resend successfully",
-    //                 showConfirmButton:false,
-    //                 timer:1500,
-    //             })
-
-    //             }else{
-    //                 Swal.fire({
-    //                     icon:'error',
-    //                     title:'Error',
-    //                     text:"An error occured while resending OTP.Please try again",
-    //                 })
-    //             }
-             
-    //         }
-    //     })
-    //     return false
-    // }
-
 
 
 

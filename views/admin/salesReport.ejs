@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <title>Sales Report</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  #salesReport {
+    width: 794px; /* A4 width in pixels at 96 DPI */
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    color: black;
+  }
+</style>
 
   <style>
     body { background-color: #f8f9fa; }
@@ -100,7 +109,7 @@
               <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
               <td><%= order.paymentMethod ? order.paymentMethod.toUpperCase() : '-' %></td>
               <td><%= order.status ? order.status.toUpperCase() : '-' %></td>
-              <td>₹<%= order.discount ?? 0 %></td>
+              <td>₹<%= order.totalDiscount ?? 0 %></td>
               <td>₹<%= order.finalAmount ?? 0 %></td>
             </tr>
           <% }) %>
@@ -122,16 +131,25 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
-    function generatePDF() {
-      const element = document.getElementById("salesReport");
-      html2pdf().from(element).set({
-        margin: 0.5,
-        filename: 'sales-report.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      }).save();
+   function generatePDF() {
+  const element = document.getElementById("salesReport");
+  html2pdf().from(element).set({
+    margin: 0.5,
+    filename: 'sales-report.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      scrollY: 0,     // 👈 fixes scroll-cut and misalignment
+      useCORS: true   // 👈 helpful if you use external images/fonts
+    },
+    jsPDF: {
+      unit: 'in',
+      format: 'a4',
+      orientation: 'portrait'
     }
+  }).save();
+}
+
 
     function downloadExcel() {
       const wb = XLSX.utils.book_new();

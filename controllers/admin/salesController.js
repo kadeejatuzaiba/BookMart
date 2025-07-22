@@ -167,7 +167,7 @@ const getSales = async (req, res) => {
     const { startDate, endDate } = buildDateRange(range, req.query);
 
     /* 2. aggregation */
-    const [stats = {           // fallback if pipeline returns nothing
+    const [stats = {         
       totalSales: 0,
       totalDiscounts: 0,
       netRevenue: 0,
@@ -189,8 +189,8 @@ const getSales = async (req, res) => {
             $group: {
               _id            : null,
               totalSales     : { $sum: '$finalAmount' }, // PAID amount
-              totalDiscounts : { $sum: '$discount'     },
-              netRevenue     : { $sum: { $subtract: ['$finalAmount', '$discount'] } },
+              totalDiscounts : { $sum: '$totalDiscount'     },
+              netRevenue     : { $sum: { $subtract: ['$finalAmount', '$totalDiscount'] } },
               totalOrders    : { $sum: 1 },
               totalProducts  : { $sum: { $size: '$orderedItems' } }
             }
@@ -199,7 +199,7 @@ const getSales = async (req, res) => {
             {
               $group: {
                 _id        : { $month: '$createdOn' },
-                netRevenue : { $sum: { $subtract: ['$finalAmount', '$discount'] } },
+                netRevenue : { $sum: { $subtract: ['$finalAmount', '$totalDiscount'] } },
                 orderCount : { $sum: 1 }
               }
             },
@@ -277,7 +277,7 @@ const getSalesReport = async (req, res, next) => {
             $group:{
               _id            : null,
               totalSales     : { $sum:'$totalPrice'   },   // before coupon
-              totalDiscounts : { $sum:'$discount'     },   // coupon
+              totalDiscounts : { $sum:'$totalDiscount'     },   // coupon
               totalPrice     : { $sum:'$finalAmount'  },   // what was paid
               totalOrders    : { $sum:1 },
               totalProducts  : { $sum:{ $size:'$orderedItems' } }

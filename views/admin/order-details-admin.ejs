@@ -41,37 +41,62 @@
       <p><strong>Subtotal:</strong> ₹<%= order.totalPrice %></p>
       <p><strong>Discount:</strong> ₹<%= order.discount || 0 %></p>
       <p><strong>Delivery:</strong> ₹<%= order.shippingCharge || 0 %></p>
-
       <p><strong>Total:</strong> ₹<%= order.finalAmount %></p>
     </div>
   </div>
 
-  <h5 class="mb-3">Ordered Items</h5>
-  <div class="table-responsive">
-    <table class="table table-bordered">
-      <thead class="table-light">
+<h5 class="mb-3">Ordered Items</h5>
+<div class="table-responsive">
+  <table class="table table-bordered align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Image</th>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% order.orderedItems.forEach(item => { %>
         <tr>
-          <th>Image</th>
-          <th>Product</th>
-          <th>Price</th>
-          <th>Qty</th>
-          <th>Total</th>
+          <td>
+            <img src="/uploads/product-images/<%= item.product.image[0] %>" width="50" height="50" style="object-fit: cover;">
+          </td>
+          <td><%= item.product.productName %></td>
+          <td>₹<%= item.product.salePrice %></td>
+          <td><%= item.quantity %></td>
+          <td>₹<%= item.price %></td>
+          <td>
+            <span class="badge 
+              <%= item.status === 'Delivered' ? 'bg-success' : 
+                  item.status === 'Cancelled' ? 'bg-danger' :
+                  item.status === 'Returned' ? 'bg-dark' :
+                  item.status === 'Return Request' ? 'bg-warning text-dark' :
+                  item.status === 'Shipped' ? 'bg-info' :
+                  'bg-light text-dark' %>">
+              <%= item.status %>
+            </span>
+          </td>
+          <td>
+            <% if (item.status === 'Return Request') { %>
+              <form method="POST" action="/admin/viewDetails/<%= order._id %>/verify-return/<%= item._id %>" onsubmit="return confirm('Are you sure you want to verify this return?')">
+                <button class="btn btn-sm btn-outline-dark">Verify Return</button>
+              </form>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <% order.orderedItems.forEach(item => { %>
-          <tr>
-            <td><img src="/uploads/product-images/<%= item.product.image[0] %>" width="50" height="50" style="object-fit: cover;"></td>
-            <td><%= item.product.productName %></td>
-            <td>₹<%= item.product.salePrice %></td>
-            <td><%= item.quantity %></td>
-            <td>₹<%= item.price %></td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </div>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 
+
+  
   <a href="/admin/orders" class="btn btn-secondary mt-3">Back to Orders</a>
 </div>
 

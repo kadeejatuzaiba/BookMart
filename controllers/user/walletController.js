@@ -1,38 +1,6 @@
 const User = require('../../models/userSchema');
 
 
-// const loadWalletPage = async (req, res) => {
-//   try {
-//     const userId = req.session.userId || req.session.user;
-//     const userData = await User.findById(userId).lean();
-
-//     if (!userData) return res.redirect('/login');
-
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = 5; // number of transactions per page
-//     const startIndex = (page - 1) * limit;
-// const allTransactions = userData.wallet?.transactions || [];
-// const reversedTransactions = [...allTransactions].reverse();  // Get newest first
-// const paginatedTransactions = reversedTransactions.slice(startIndex, startIndex + limit);
-
-
-//     const totalPages = Math.ceil(allTransactions.length / limit);
-
-//     res.render('wallet', {
-//       user: userData,
-//       transactions: paginatedTransactions,
-//       currentPage: page,
-//       totalPages
-//     });
-
-//   } catch (error) {
-//     console.error("Error loading wallet:", error);
-//     res.redirect('/profile');
-//   }
-// };
-
-
-
 
 const loadWalletPage = async (req, res) => {
   try {
@@ -86,6 +54,8 @@ const creditWallet = async (userId, amount, description, orderId = null) => {
   });
 
   await user.save({ validateBeforeSave: false });
+
+  
 };
 
 

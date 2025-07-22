@@ -79,6 +79,8 @@ router.get('/orders',adminAuth,orderController.listOrders)
 router.patch('/orders/:id/status',adminAuth, orderController.updateStatus);
 router.post('/verify-return/:id', orderController.verifyReturnRequest);
 router.get('/viewDetails/:id', adminAuth, orderController.viewAdminOrderDetails);
+router.post('/viewDetails/:id/verify-return/:itemId', orderController.verifyProductReturn);
+
 
 
 // Sales Management

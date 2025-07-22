@@ -25,7 +25,12 @@
         <p><strong>Model Name:</strong> <%= user.name %></p>
         <p><strong>Phone:</strong> <%= user.phone %></p>
         <p><strong>Email:</strong> <%= user.email %></p>
-        <p><strong>Referral Code:</strong> <span class="text-success fw-bold">ZAIB59</span></p>
+<% if (user.referralCode) { %>
+  <p><strong>Referral Code:</strong> <span class="text-success fw-bold"><%= user.referralCode %></span></p>
+<% } else { %>
+  <p><strong>Referral Code:</strong> <span class="text-muted">Not generated</span></p>
+<% } %>
+
       </div>
     <a href="/editProfile" class="btn btn-success custom-hover px-4 btn-pill mt-2 ms-3 mb-3" style="height: 40px; width: fit-content;">Edit Profile</a>
 

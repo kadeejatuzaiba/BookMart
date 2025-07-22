@@ -166,12 +166,64 @@ const viewAdminOrderDetails = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+const verifyProductReturn = async (req, res) => {
+  try {
+    const { id: orderId, itemId } = req.params;
+
+    const order = await Order.findById(orderId).populate('user');
+    if (!order) return res.status(404).send('Order not found');
+
+    const user = order.user;
+    if (!user) return res.status(404).send('User not found');
+
+    const item = order.orderedItems.id(itemId);
+    if (!item || item.status !== 'Return Request') {
+      return res.status(400).send('Invalid or already processed item');
+    }
+
+    // 1. Refund the item's price
+    const refundAmount = item.price;
+    if (!user.wallet) {
+      user.wallet = { balance: 0, transactions: [] };
+    }
+
+    user.wallet.balance += refundAmount;
+    user.wallet.transactions.push({
+      type: 'credit',
+      amount: refundAmount,
+      description: `Refund - returned product ${item.product}`,
+      orderId: order._id
+    });
+    await user.save();
+
+    // 2. Update product status
+    item.status = 'returned';
+
+    // 3. Update product stock
+    await Product.findByIdAndUpdate(item.product, {
+      $inc: { quantity: item.quantity }
+    });
+
+    // 4. If all items returned, mark whole order as returned
+    const allReturned = order.orderedItems.every(i => i.status === 'returned');
+    if (allReturned) order.status = 'returned';
+
+    await order.save();
+
+    res.redirect(`/admin/viewDetails/${orderId}`);
+
+  } catch (err) {
+    console.error('verifyProductReturn error:', err);
+    res.status(500).send('Server error');
+  }
+};
 
 
 module.exports={
     listOrders,
     updateStatus,
     verifyReturnRequest,
-    viewAdminOrderDetails
+    viewAdminOrderDetails,
+    verifyProductReturn
   
 }

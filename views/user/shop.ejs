@@ -89,7 +89,7 @@
     <div class="col-md-3">
       <div class="card p-3 mb-3">
         <h5>Search</h5>
-        <form method="POST" action="/search">
+        <!-- <form method="POST" action="/search">
           <input type="text" name="search" class="form-control" placeholder="Search for books">
 
 
@@ -97,7 +97,23 @@
 <button type="button" style="height: 40px;" onclick="window.location.href='/shop'" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1">Clear</button>
 
 
-                            </form>
+                            </form> -->
+
+
+                            <form method="GET" action="/shop">
+  <input type="text" name="search" value="<%= search || '' %>" class="form-control" placeholder="Search for books">
+  
+  <!-- Hidden fields to preserve filters and sorting -->
+  <input type="hidden" name="category" value="<%= selectedCategory || '' %>">
+  <input type="hidden" name="sort" value="<%= sort || '' %>">
+  <input type="hidden" name="gt" value="<%= gt || '' %>">
+  <input type="hidden" name="lt" value="<%= lt || '' %>">
+
+  <button type="submit" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1" style="height: 40px;">Search</button>
+  <button type="button" onclick="window.location.href='/shop'" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1" style="height: 40px;">Clear</button>
+</form>
+
+
       </div>
       <div class="card p-3 mb-3">
         <h5>Categories</h5>
@@ -105,7 +121,11 @@
           <% if (category && category.length > 0) { %>
             <% category.forEach(cat => { %>
               <li class="filter-item">
-                <a href="/filter?category=<%= cat._id %>"><%= cat.name %></a>
+                <!-- <a href="/filter?category=<%= cat._id %>"><%= cat.name %></a> -->
+
+                <a href="/shop?category=<%= cat._id %>&search=<%= search || '' %>&sort=<%= sort || '' %>&gt=<%= gt || '' %>&lt=<%= lt || '' %>">
+  <%= cat.name %>
+</a>
 
               </li>
             <% }); %>
@@ -121,9 +141,18 @@
   <h5>Filter by Price</h5>
   <form id="price-filter-form" method="GET" action="/shop">
     <div class="d-flex flex-column gap-2">
-      <a href="/filterPrice?gt=0&lt=500" class="btn btn-outline-secondary rounded-pill price-btn">Under ₹500</a>
+      <!-- <a href="/filterPrice?gt=0&lt=500" class="btn btn-outline-secondary rounded-pill price-btn">Under ₹500</a>
       <a href="/filterPrice?gt=500&lt=1000" class="btn btn-outline-secondary rounded-pill price-btn">₹500 - ₹1000</a>
-      <a href="/filterPrice?gt=1000&lt=1000000" class="btn btn-outline-secondary rounded-pill price-btn">Above ₹1000</a>
+      <a href="/filterPrice?gt=1000&lt=1000000" class="btn btn-outline-secondary rounded-pill price-btn">Above ₹1000</a> -->
+
+      <a href="/shop?gt=0&lt=500&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&sort=<%= sort || '' %>" 
+   class="btn btn-outline-secondary rounded-pill price-btn">Under ₹500</a>
+
+<a href="/shop?gt=500&lt=1000&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&sort=<%= sort || '' %>" 
+   class="btn btn-outline-secondary rounded-pill price-btn">₹500 - ₹1000</a>
+
+<a href="/shop?gt=1000&lt=1000000&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&sort=<%= sort || '' %>" 
+   class="btn btn-outline-secondary rounded-pill price-btn">Above ₹1000</a>
 
     </div>
   </form>
@@ -132,10 +161,23 @@
 <div class="card p-3 mb-3">
   <h5>Sort By</h5>
   <div class="d-flex flex-column gap-2">
-<a href="/sortProducts?sort=price-asc" class="btn btn-outline-secondary rounded-pill sort-btn">Price: Low to High</a>
+<!-- <a href="/sortProducts?sort=price-asc" class="btn btn-outline-secondary rounded-pill sort-btn">Price: Low to High</a>
 <a href="/sortProducts?sort=price-desc" class="btn btn-outline-secondary rounded-pill sort-btn">Price: High to Low</a>
 <a href="/sortProducts?sort=name-asc" class="btn btn-outline-secondary rounded-pill sort-btn">Name: A - Z</a>
-<a href="/sortProducts?sort=name-desc" class="btn btn-outline-secondary rounded-pill sort-btn">Name: Z - A</a>
+<a href="/sortProducts?sort=name-desc" class="btn btn-outline-secondary rounded-pill sort-btn">Name: Z - A</a> -->
+
+<a href="/shop?sort=price-asc&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&gt=<%= gt || '' %>&lt=<%= lt || '' %>" 
+   class="btn btn-outline-secondary rounded-pill sort-btn">Price: Low to High</a>
+
+<a href="/shop?sort=price-desc&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&gt=<%= gt || '' %>&lt=<%= lt || '' %>" 
+   class="btn btn-outline-secondary rounded-pill sort-btn">Price: High to Low</a>
+
+<a href="/shop?sort=name-asc&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&gt=<%= gt || '' %>&lt=<%= lt || '' %>" 
+   class="btn btn-outline-secondary rounded-pill sort-btn">Name: A - Z</a>
+
+<a href="/shop?sort=name-desc&search=<%= search || '' %>&category=<%= selectedCategory || '' %>&gt=<%= gt || '' %>&lt=<%= lt || '' %>" 
+   class="btn btn-outline-secondary rounded-pill sort-btn">Name: Z - A</a>
+
 
   </div>
 </div>
@@ -265,13 +307,20 @@
 <!-- Pagination -->
 
 
+
+
+
+
 <div class="d-flex justify-content-center mt-4">
   <ul class="pagination">
 
-    <% let sortQuery = typeof sort !== 'undefined' ? `&sort=${sort}` : ''; %>
-    <% let filterQuery = typeof gt !== 'undefined' && typeof lt !== 'undefined' ? `&gt=${gt}&lt=${lt}` : ''; %>
-    <% let extraQuery = sortQuery + filterQuery; %>
+    <% 
+      const sortQuery = sort ? `&sort=${sort}` : ''; 
+      const filterQuery = (gt && lt) ? `&gt=${gt}&lt=${lt}` : '';
+      const extraQuery = `${sortQuery}${filterQuery}`;
+    %>
 
+    <!-- Previous button -->
     <% if (currentPage > 1) { %>
       <li class="page-item">
         <a class="page-link" href="?page=<%= currentPage - 1 %><%= extraQuery %>">&laquo; Prev</a>
@@ -282,12 +331,14 @@
       </li>
     <% } %>
 
+    <!-- Page numbers -->
     <% for (let i = 1; i <= totalPages; i++) { %>
       <li class="page-item <%= i === currentPage ? 'active' : '' %>">
         <a class="page-link" href="?page=<%= i %><%= extraQuery %>"><%= i %></a>
       </li>
     <% } %>
 
+    <!-- Next button -->
     <% if (currentPage < totalPages) { %>
       <li class="page-item">
         <a class="page-link" href="?page=<%= currentPage + 1 %><%= extraQuery %>">Next &raquo;</a>
@@ -300,6 +351,7 @@
 
   </ul>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

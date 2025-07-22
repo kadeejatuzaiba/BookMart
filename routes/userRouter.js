@@ -52,11 +52,6 @@ router.get('/logout',userController.logout)
 //Home page && Shopping page
 router.get('/',userController.loadHomepage)
 router.get('/shop',userAuth,userController.loadShoppingPage)
-router.get('/filter',userAuth,userController.filterProduct)
-router.get('/filterPrice',userAuth,userController.filterByPrice)
-router.get('/sortProducts',userAuth,userController.sortProducts)
-router.post('/search',userAuth,userController.searchProducts)
-
 
 //Profile Management
 router.get('/forgot-password',profileController.getForgotPassPage);

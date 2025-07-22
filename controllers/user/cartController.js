@@ -2,32 +2,6 @@ const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
 const User = require('../../models/userSchema');
 
-// Load Cart Page
-// const loadCartPage = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     const cart = await Cart.findOne({ userId, 'items.status': 'active' }).populate({
-//       path: 'items.productId',
-//       model: Product,
-//       populate: { path: 'category', model: 'Category' }
-//     });
-
-//     let total = 0;
-//     if (cart && cart.items.length > 0) {
-//       cart.items.forEach(item => {
-//         total += item.totalPrice;
-//       });
-//     }
-
-//     const items = cart ? cart.items : [];
-
-//     res.render('cart', { user: req.session.user, items, total });
-//   } catch (err) {
-//     console.error('Error loading cart page:', err);
-//     res.redirect('/pageNotFound');
-//   }
-// };
-
 
 
 const loadCartPage = async (req, res) => {

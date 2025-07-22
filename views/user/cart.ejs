@@ -50,7 +50,14 @@
                 </td>
                 <td><%= p.productName %></td>
                 <td><%= p.category.name %></td>
-                <td>₹<%= p.salePrice %></td>
+                
+                <td>
+  ₹<%= p.salePrice %>
+  <% if (p.salePrice < p.regularPrice) { %>
+    <s class="text-muted ms-1">₹<%= p.regularPrice %></s>
+  <% } %>
+</td>
+
 
                 <td>
                   <div class="d-flex justify-content-center align-items-center">

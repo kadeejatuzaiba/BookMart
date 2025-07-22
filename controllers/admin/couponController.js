@@ -108,7 +108,8 @@ const editCouponForm = async (req, res) => {
 
     res.render('coupon', {
       coupons: allCoupons,
-      editCoupon: couponToEdit
+      editCoupon: couponToEdit,
+      errorMsg:null
     });
   } catch (err) {
     console.error(err);
