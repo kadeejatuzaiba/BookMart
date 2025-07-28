@@ -123,10 +123,21 @@ router.get('/download-invoice/:id',userAuth,orderController.getInvoice)
 router.patch('/cancel-product/:orderId/:itemId', userAuth, orderController.cancelProduct);
 // For returning a single product in order
 router.patch('/return-product/:orderId/:itemId', userAuth, upload.array('images', 3), orderController.returnProduct);
-router.post('/retry-payment',userAuth,orderController.retryPayment);
+router.get('/retry-payment/:orderId',userAuth,orderController.getretryPayment);
+
+
+
+// retry payment
+router.put('/retry-payment/cod/:orderId', userAuth, orderController.retryCOD);
+router.put('/retry-payment/wallet/:orderId', userAuth, orderController.retryWallet);
+router.post('/retry-payment/razorpay', userAuth, orderController.retryRazorpay);
+router.post('/retry-payment/verify', userAuth, orderController.verifyRetryPayment);
+
 
 // Wallet Management
 router.get('/wallet',userAuth,walletController.loadWalletPage)
-
+router.post('/wallet/createOrder',userAuth,walletController.createOrder)
+router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
+router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
 
 module.exports = router;

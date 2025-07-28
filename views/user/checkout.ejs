@@ -79,21 +79,29 @@
                     <h5 class="modal-title fw-bold" id="couponModalLabel">Select a Coupon</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <div class="modal-body">
-                    <% coupons.forEach((coupon, i) => { %>
-                      <div class="form-check mb-3 border rounded px-3 py-2">
-                        <input class="form-check-input" type="radio" name="selectedCoupon" id="coupon<%= i %>" value="<%= coupon.couponName %>">
-                        <label class="form-check-label w-100" for="coupon<%= i %>">
-                          <div>
-                            <span class="fw-bold text-primary"><%= coupon.couponName %></span><br>
-                            <span class="text-success fw-semibold">₹<%= coupon.offerPrice %> Off</span>
-                            <span class="text-muted small"> on orders above ₹<%= coupon.minimumPrice %></span><br>
-                            <small class="text-warning">Expires on <%= coupon.endDate.toDateString() %></small>
-                          </div>
-                        </label>
-                      </div>
-                    <% }) %>
-                  </div>
+            <div class="modal-body">
+  <% if (coupons.length > 0) { %>
+    <% coupons.forEach((coupon, i) => { %>
+      <div class="form-check mb-3 border rounded px-3 py-2">
+        <input class="form-check-input" type="radio" name="selectedCoupon" id="coupon<%= i %>" value="<%= coupon.couponName %>">
+        <label class="form-check-label w-100" for="coupon<%= i %>">
+          <div>
+            <span class="fw-bold text-primary"><%= coupon.couponName %></span><br>
+            <span class="text-success fw-semibold">₹<%= coupon.offerPrice %> Off</span>
+            <span class="text-muted small"> on orders above ₹<%= coupon.minimumPrice %></span><br>
+            <small class="text-warning">Expires on <%= coupon.endDate.toDateString() %></small>
+          </div>
+        </label>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="text-center text-muted py-3">
+      <i class="bi bi-ticket-perforated fs-3 d-block mb-2"></i>
+      <strong>No coupons available</strong>
+    </div>
+  <% } %>
+</div>
+
                   <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Clear Selection</button>
                     <button class="btn btn-primary" id="applyCouponFromModal">Proceed</button>
@@ -138,17 +146,20 @@
             <!-- Payment Method -->
             <h6 class="fw-bold mb-2">Payment Method</h6>
             <div class="form-check mb-2">
-              <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay" value="razorpay">
-              <label class="form-check-label" for="razorpay">Online Payment</label>
-            </div>
-            <div class="form-check mb-2">
-              <input class="form-check-input" type="radio" name="paymentMethod" id="wallet" value="wallet">
-              <label class="form-check-label" for="wallet">Wallet Payment (Balance: ₹)</label>
-            </div>
-            <div class="form-check mb-3">
-              <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod" checked>
-              <label class="form-check-label" for="cod">Cash on Delivery</label>
-            </div>
+  <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay" value="Razorpay">
+  <label class="form-check-label" for="razorpay">Online Payment</label>
+</div>
+
+<div class="form-check mb-2">
+  <input class="form-check-input" type="radio" name="paymentMethod" id="paymentWallet" value="Wallet">
+  <label class="form-check-label" for="wallet">Wallet Payment (Balance: ₹<%=user.wallet.balance %>)</label>
+</div>
+
+<div class="form-check mb-3">
+  <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="Cash On Delivery" checked>
+  <label class="form-check-label" for="cod">Cash on Delivery</label>
+</div>
+
 
             <button class="btn btn-warning w-100" onclick="placeOrder()">Place Order</button>
           </div>
@@ -157,6 +168,64 @@
     </div>
   </div>
 </section>
+
+ <div
+    class="modal fade"
+    id="walletPaymentModal"
+    tabindex="-1"
+    aria-labelledby="walletPaymentModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="walletPaymentModalLabel">
+            Wallet Payment
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <h6>
+              Available Balance: ₹<span id="walletBalance"
+                ><%= user.wallet.balance.toFixed(2) %></span
+              >
+            </h6>
+            <h6>Payable Amount: ₹<span id="payableAmount"></span></h6>
+          </div>
+          <div id="insufficientFunds" style="display: none">
+            <div class="alert alert-warning">
+              Insufficient funds in wallet. Please add money to continue.
+            </div>
+            <a href="/wallet#add-money-button" class="btn btn-primary"
+              >Add Money</a
+            >
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="confirmWalletPayment"
+          >
+            Pay Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-Gn5384xqQ1aoWXA+058RXPXfg6Nv6JCzF5ZC8EG5fAwIQ9k/rwZV+YFf5Xq5drFQ" crossorigin="anonymous"></script>
+
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -224,25 +293,48 @@
   });
 
   async function placeOrder() {
-    const address = document.querySelector('input[name="selectedAddress"]:checked')?.value;
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-    if (!address || !paymentMethod) {
-      return Swal.fire("Missing Info", "Please select address & payment method", "warning");
+  const address = document.querySelector('input[name="selectedAddress"]:checked')?.value;
+  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+
+  if (!address || !paymentMethod) {
+    return Swal.fire("Missing Info", "Please select address & payment method", "warning");
+  }
+
+  // Show wallet modal if wallet selected
+  if (paymentMethod === 'Wallet') {
+    const total = document.getElementById('grandTotal').innerText.replace('₹', '');
+    const walletBalance = parseFloat(document.getElementById('walletBalance').innerText);
+
+    document.getElementById('payableAmount').innerText = total;
+
+    if (walletBalance < parseFloat(total)) {
+      document.getElementById('insufficientFunds').style.display = 'block';
+      document.getElementById('confirmWalletPayment').style.display = 'none';
+    } else {
+      document.getElementById('insufficientFunds').style.display = 'none';
+      document.getElementById('confirmWalletPayment').style.display = 'inline-block';
     }
 
-    const res = await fetch('/place-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ selectedAddress: address, paymentMethod })
-    });
+    const walletModal = new bootstrap.Modal(document.getElementById('walletPaymentModal'));
+    walletModal.show();
+    return; // Don't continue now, wait for wallet confirmation
+  }
 
-    const data = await res.json();
+  // Continue as before for COD or Razorpay
+  const res = await fetch('/place-order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ selectedAddress: address, paymentMethod })
+  });
 
-    if (paymentMethod === 'cod') {
-      if (data.status) window.location.href = `/order-success?orderId=${data.orderId}`;
-      else Swal.fire("Failed", data.message, "error");
-      return;
-    }
+  const data = await res.json();
+
+  if (paymentMethod === 'Cash On Delivery') {
+    if (data.status) window.location.href = `/order-success?orderId=${data.orderId}`;
+    else Swal.fire("Failed", data.message, "error");
+    return;
+  }
+
 
     const options = {
       key: data.key,
@@ -277,6 +369,26 @@
     };
     new Razorpay(options).open();
   }
+
+
+  document.getElementById('confirmWalletPayment').addEventListener('click', async () => {
+  const address = document.querySelector('input[name="selectedAddress"]:checked')?.value;
+
+  const res = await fetch('/place-order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ selectedAddress: address, paymentMethod: 'Wallet' })
+  });
+
+  const data = await res.json();
+
+  if (data.status) {
+    window.location.href = `/order-success?orderId=${data.orderId}`;
+  } else {
+    Swal.fire("Failed", data.message, "error");
+  }
+});
+
 </script>
 
 <%- include("../partials/user/footer") %>

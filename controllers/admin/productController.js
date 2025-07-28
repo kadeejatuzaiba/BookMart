@@ -54,20 +54,6 @@ const addProduct=async(req,res)=>{
                 return  res.status(400).json('Invalid category name')
             }
 
-            // const newProduct = new Product({
-            //     productName: products.productName,
-            //     author: products.author,
-            //     description: products.description,
-            //     category: categoryId._id,
-            //     regularPrice: products.regularPrice,
-            //     salePrice: products.salePrice,
-            //     quantity: products.quantity,
-            //     image: images, 
-            //     status: 'active'
-            // });
-
-
-
 
             const regularPrice = parseFloat(products.regularPrice);
 const category = await Categoey.findById(categoryId._id);
