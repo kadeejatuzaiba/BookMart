@@ -47,12 +47,6 @@ const userSchema = new Schema({
        type : Schema.Types.ObjectId,
        ref :"Cart"
    }],
-//    wallet:{
-//     type:Number,
-//     default:0,
-// },
-
-
 
 
 wallet: {
@@ -89,15 +83,16 @@ orderHistory:[{
 createdOn : {
     type:Date,
     default:Date.now,
-},
-referralCode: {
+},referralCode: {
   type: String,
-
+  unique: true,   
+  sparse: true, 
   required: false
-},
+}
+,
 referredBy: {
   type: String,
-  default: null  // Will hold the referral code of the referrer
+  default: null  
 },
 redeemed:{
     type:Boolean
