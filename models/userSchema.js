@@ -92,7 +92,7 @@ createdOn : {
 },
 referralCode: {
   type: String,
-  unique: true,
+
   required: false
 },
 referredBy: {
