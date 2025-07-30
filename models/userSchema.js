@@ -85,10 +85,9 @@ createdOn : {
     default:Date.now,
 },referralCode: {
   type: String,
-  unique: true,   
-  sparse: true, 
-  required: false
+  default: null
 }
+
 ,
 referredBy: {
   type: String,
