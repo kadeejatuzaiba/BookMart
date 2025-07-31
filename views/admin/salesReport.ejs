@@ -4,15 +4,25 @@
   <meta charset="UTF-8">
   <title>Sales Report</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+
 <style>
   #salesReport {
-    width: 794px; /* A4 width in pixels at 96 DPI */
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: white;
-    color: black;
+    width: 100%;
+    font-size: 12px;  
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 6px;
+    word-wrap: break-word;
+    text-align: center;
   }
 </style>
+
 
   <style>
     body { background-color: #f8f9fa; }
@@ -138,14 +148,14 @@
     filename: 'sales-report.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: {
-      scale: 2,
+      scale: 1.2,
       scrollY: 0,     // 👈 fixes scroll-cut and misalignment
       useCORS: true   // 👈 helpful if you use external images/fonts
     },
     jsPDF: {
       unit: 'in',
       format: 'a4',
-      orientation: 'portrait'
+      orientation: 'landscape'
     }
   }).save();
 }
