@@ -27,6 +27,7 @@ async (accessToken, refreshToken, profile, done) => {  // ✅ changed 'Profiling
             return done(null, user);
         }
     } catch (error) {
+           console.error('❌ Google Strategy Error:', error);
         return done(error, null);  
     }
 }));
