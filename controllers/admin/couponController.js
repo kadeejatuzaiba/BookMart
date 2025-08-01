@@ -3,10 +3,10 @@ const Coupon = require('../../models/couponSchema');
 const loadCoupon = async (req, res) => {
   try {
     const coupons = await Coupon.find({});
-    res.render('coupon', { 
-      coupons, 
-      editCoupon: null,     // ✅ ADD THIS
-      errorMsg: null        // ✅ if using error display
+    res.render('coupon', {
+      coupons,
+      editCoupon: null, // ✅ ADD THIS
+      errorMsg: null, // ✅ if using error display
     });
   } catch (err) {
     console.error(err);
@@ -14,24 +14,20 @@ const loadCoupon = async (req, res) => {
   }
 };
 
-
 const createCoupon = async (req, res) => {
   try {
-    const {
-      couponName,
-      startDate,
-      endDate,
-      offerPrice,
-      minimumPrice
-    } = req.body;
+    const { couponName, startDate, endDate, offerPrice, minimumPrice } =
+      req.body;
 
     // Check if coupon with same name already exists
-    const existingCoupon = await Coupon.findOne({ couponName: couponName.trim() });
+    const existingCoupon = await Coupon.findOne({
+      couponName: couponName.trim(),
+    });
     if (existingCoupon) {
       return res.render('coupon', {
         coupons: await Coupon.find({}),
-         editCoupon: null,  
-        errorMsg: 'Coupon name already exists'
+        editCoupon: null,
+        errorMsg: 'Coupon name already exists',
       });
     }
 
@@ -40,7 +36,7 @@ const createCoupon = async (req, res) => {
       startDate: new Date(startDate + 'T00:00:00'),
       endDate: new Date(endDate + 'T00:00:00'),
       offerPrice: Number(offerPrice),
-      minimumPrice: Number(minimumPrice)
+      minimumPrice: Number(minimumPrice),
     });
 
     await newCoupon.save();
@@ -54,18 +50,13 @@ const createCoupon = async (req, res) => {
 const updateCoupon = async (req, res) => {
   try {
     const couponId = req.params.id;
-    const {
-      couponName,
-      startDate,
-      endDate,
-      offerPrice,
-      minimumPrice
-    } = req.body;
+    const { couponName, startDate, endDate, offerPrice, minimumPrice } =
+      req.body;
 
     // Check if another coupon with the same name already exists (excluding current)
     const duplicate = await Coupon.findOne({
       couponName: couponName.trim(),
-      _id: { $ne: couponId }
+      _id: { $ne: couponId },
     });
 
     if (duplicate) {
@@ -75,7 +66,7 @@ const updateCoupon = async (req, res) => {
       return res.render('coupon', {
         coupons,
         editCoupon: couponToEdit,
-        errorMsg: 'Coupon name already exists'
+        errorMsg: 'Coupon name already exists',
       });
     }
 
@@ -85,7 +76,7 @@ const updateCoupon = async (req, res) => {
       startDate: new Date(startDate + 'T00:00:00'),
       endDate: new Date(endDate + 'T00:00:00'),
       offerPrice: Number(offerPrice),
-      minimumPrice: Number(minimumPrice)
+      minimumPrice: Number(minimumPrice),
     });
 
     res.redirect('/admin/coupons');
@@ -94,7 +85,6 @@ const updateCoupon = async (req, res) => {
     res.redirect('/admin/pageerror');
   }
 };
-
 
 const editCouponForm = async (req, res) => {
   try {
@@ -109,7 +99,7 @@ const editCouponForm = async (req, res) => {
     res.render('coupon', {
       coupons: allCoupons,
       editCoupon: couponToEdit,
-      errorMsg:null
+      errorMsg: null,
     });
   } catch (err) {
     console.error(err);
@@ -127,7 +117,6 @@ const deleteCoupon = async (req, res) => {
     res.status(500).json({ ok: false, msg: 'Server error' });
   }
 };
-
 
 module.exports = {
   loadCoupon,

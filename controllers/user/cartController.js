@@ -2,15 +2,16 @@ const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
 const User = require('../../models/userSchema');
 
-
-
 const loadCartPage = async (req, res) => {
   try {
     const userId = req.session.user;
-    const cart = await Cart.findOne({ userId, 'items.status': 'active' }).populate({
+    const cart = await Cart.findOne({
+      userId,
+      'items.status': 'active',
+    }).populate({
       path: 'items.productId',
       model: Product,
-      populate: { path: 'category', model: 'Category' }
+      populate: { path: 'category', model: 'Category' },
     });
 
     let total = 0;
@@ -33,15 +34,13 @@ const loadCartPage = async (req, res) => {
       user: req.session.user,
       items,
       total,
-      hasStockIssue
+      hasStockIssue,
     });
   } catch (err) {
     console.error('Error loading cart page:', err);
     res.redirect('/pageNotFound');
   }
 };
-
-
 
 // Add to Cart
 const addToCart = async (req, res) => {
@@ -50,21 +49,32 @@ const addToCart = async (req, res) => {
     const { productId, quantity } = req.body;
 
     let qty = parseInt(quantity);
-if (isNaN(qty)) qty = 1;  // fallback
-if (qty < 1 || qty > 5) {
-  return res.status(400).json({ status: false, message: 'Invalid quantity selected' });
-}
-
+    if (isNaN(qty)) qty = 1; // fallback
+    if (qty < 1 || qty > 5) {
+      return res
+        .status(400)
+        .json({ status: false, message: 'Invalid quantity selected' });
+    }
 
     const product = await Product.findById(productId).populate('category');
 
     // Validate product and category
-    if (!product || product.isBlocked || !product.isListed || !product.category || product.category.isBlocked) {
-      return res.status(400).json({ status: false, message: 'Product is unavailable' });
+    if (
+      !product ||
+      product.isBlocked ||
+      !product.isListed ||
+      !product.category ||
+      product.category.isBlocked
+    ) {
+      return res
+        .status(400)
+        .json({ status: false, message: 'Product is unavailable' });
     }
 
     if (product.quantity === 0) {
-      return res.status(400).json({ status: false, message: 'Product is out of stock' });
+      return res
+        .status(400)
+        .json({ status: false, message: 'Product is out of stock' });
     }
 
     // Get or create user's cart
@@ -74,14 +84,19 @@ if (qty < 1 || qty > 5) {
       cart = new Cart({ userId, items: [] });
     }
 
-    const existingItem = cart.items.find(item => item.productId.toString() === productId);
+    const existingItem = cart.items.find(
+      (item) => item.productId.toString() === productId
+    );
 
     if (existingItem) {
       // Calculate new total quantity
       const newQuantity = existingItem.quantity + qty;
 
       if (newQuantity > product.quantity || newQuantity > 5) {
-        return res.status(400).json({ status: false, message: 'Not enough stock to add this quantity' });
+        return res.status(400).json({
+          status: false,
+          message: 'Not enough stock to add this quantity',
+        });
       }
 
       existingItem.quantity = newQuantity;
@@ -89,7 +104,9 @@ if (qty < 1 || qty > 5) {
     } else {
       // New item
       if (qty > product.quantity || qty > 5) {
-        return res.status(400).json({ status: false, message: 'Not enough stock' });
+        return res
+          .status(400)
+          .json({ status: false, message: 'Not enough stock' });
       }
 
       cart.items.push({
@@ -97,7 +114,7 @@ if (qty < 1 || qty > 5) {
         quantity: qty,
         price: product.salePrice,
         totalPrice: qty * product.salePrice,
-        status: 'active'
+        status: 'active',
       });
     }
 
@@ -108,16 +125,13 @@ if (qty < 1 || qty > 5) {
 
     return res.status(200).json({
       status: true,
-      message: 'Product added to cart'
+      message: 'Product added to cart',
     });
   } catch (error) {
     console.error('Error adding to cart:', error);
     return res.status(500).json({ status: false, message: 'Server error' });
   }
 };
-
-
-
 
 // Remove Product
 const removeProduct = async (req, res) => {
@@ -128,7 +142,9 @@ const removeProduct = async (req, res) => {
     const cart = await Cart.findOne({ userId });
     if (!cart) return res.redirect('/cart');
 
-    cart.items = cart.items.filter(item => item.productId.toString() !== productId);
+    cart.items = cart.items.filter(
+      (item) => item.productId.toString() !== productId
+    );
     await cart.save();
 
     return res.redirect('/cart');
@@ -161,8 +177,6 @@ const removeProduct = async (req, res) => {
 //   }
 // };
 
-
-
 const increaseQuantity = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -194,8 +208,6 @@ const increaseQuantity = async (req, res) => {
   }
 };
 
-
-
 // Decrease Quantity
 const decreaseQuantity = async (req, res) => {
   try {
@@ -223,5 +235,5 @@ module.exports = {
   addToCart,
   removeProduct,
   increaseQuantity,
-  decreaseQuantity
+  decreaseQuantity,
 };

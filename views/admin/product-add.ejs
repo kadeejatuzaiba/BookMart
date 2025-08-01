@@ -1,10 +1,16 @@
 <%- include("../../views/partials/admin/header") %>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"
+  rel="stylesheet"
+/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 <style>
-  .error-message { color: red; font-size: 0.9rem; }
+  .error-message {
+    color: red;
+    font-size: 0.9rem;
+  }
   .thumbnail-wrapper {
     position: relative;
     width: 120px;
@@ -41,8 +47,13 @@
       <div class="card mb-4">
         <div class="card-body">
           <h2 class="content-title mb-4">Add New Product</h2>
-          <form method="POST" id="productForm" action="/admin/addProduct" enctype="multipart/form-data" onsubmit="return validateForm()">
-
+          <form
+            method="POST"
+            id="productForm"
+            action="/admin/addProduct"
+            enctype="multipart/form-data"
+            onsubmit="return validateForm()"
+          >
             <!-- Product Info -->
             <div class="mb-3">
               <label>Product Name</label>
@@ -58,7 +69,11 @@
 
             <div class="mb-3">
               <label>Description</label>
-              <textarea name="description" rows="3" class="form-control"></textarea>
+              <textarea
+                name="description"
+                rows="3"
+                class="form-control"
+              ></textarea>
               <div id="description-error" class="error-message"></div>
             </div>
 
@@ -86,7 +101,7 @@
               <label>Category</label>
               <select name="category" class="form-select">
                 <% cat.forEach(c => { %>
-                  <option value="<%= c.name %>"><%= c.name %></option>
+                <option value="<%= c.name %>"><%= c.name %></option>
                 <% }) %>
               </select>
               <div id="category-error" class="error-message"></div>
@@ -96,13 +111,25 @@
             <div class="mb-4">
               <label>Upload up to 4 images</label>
               <div class="d-flex flex-wrap" id="imagePreviewContainer"></div>
-              <input type="file" id="uploadInput" class="form-control mt-2" accept="image/*" onchange="handleImage(this)" />
+              <input
+                type="file"
+                id="uploadInput"
+                class="form-control mt-2"
+                accept="image/*"
+                onchange="handleImage(this)"
+              />
 
               <div id="images-error" class="error-message"></div>
 
               <div class="image-cropper mt-3">
-                <img id="cropperPreview" style="max-width: 100%;" />
-                <button type="button" onclick="saveCroppedImage()" class="btn btn-sm btn-primary mt-2">Crop & Save</button>
+                <img id="cropperPreview" style="max-width: 100%" />
+                <button
+                  type="button"
+                  onclick="saveCroppedImage()"
+                  class="btn btn-sm btn-primary mt-2"
+                >
+                  Crop & Save
+                </button>
               </div>
             </div>
 
@@ -113,10 +140,9 @@
             <!-- <button type="submit" onclick="publishHandle()" class="btn btn-success">Publish</button> -->
 
             <form id="productForm" enctype="multipart/form-data">
-  <!-- Your fields here -->
-  <button type="submit" class="btn btn-success">Publish</button>
-</form>
-
+              <!-- Your fields here -->
+              <button type="submit" class="btn btn-success">Publish</button>
+            </form>
           </form>
         </div>
       </div>
@@ -125,55 +151,51 @@
 </section>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
 <script>
+  document
+    .getElementById('productForm')
+    .addEventListener('submit', async function (e) {
+      e.preventDefault(); // stop default submit
 
+      // ❗ Validate before sending
+      if (!validateForm()) {
+        return; // Don't submit if invalid
+      }
 
-document.getElementById('productForm').addEventListener('submit', async function(e) {
-  e.preventDefault(); // stop default submit
+      const form = e.target;
+      const formData = new FormData(form); // to handle file uploads
 
-  // ❗ Validate before sending
-  if (!validateForm()) {
-    return; // Don't submit if invalid
-  }
+      try {
+        const response = await fetch('/admin/addProduct', {
+          method: 'POST',
+          body: formData,
+        });
 
-  const form = e.target;
-  const formData = new FormData(form); // to handle file uploads
-
-  try {
-    const response = await fetch('/admin/addProduct', {
-      method: 'POST',
-      body: formData,
+        if (response.ok) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Product added successfully!',
+          }).then(() => {
+            window.location.href = '/admin/addProduct';
+          });
+        } else {
+          const errorData = await response.json();
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: errorData.message || 'Something went wrong!',
+          });
+        }
+      } catch (err) {
+        console.error('Request failed', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Server error. Please try again later.',
+        });
+      }
     });
-
-    if (response.ok) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Product added successfully!',
-      }).then(() => {
-        window.location.href = '/admin/addProduct';
-      });
-    } else {
-      const errorData = await response.json();
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: errorData.message || 'Something went wrong!',
-      });
-    }
-  } catch (err) {
-    console.error('Request failed', err);
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Server error. Please try again later.',
-    });
-  }
-});
-
-
-
 
   let cropper;
   let croppedBlobs = [];
@@ -182,21 +204,21 @@ document.getElementById('productForm').addEventListener('submit', async function
   function handleImage(input) {
     if (!input.files.length) return;
     if (croppedBlobs.length >= maxImages) {
-      alert("Maximum 4 images allowed.");
+      alert('Maximum 4 images allowed.');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = () => {
-      const image = document.getElementById("cropperPreview");
+      const image = document.getElementById('cropperPreview');
       image.src = reader.result;
 
-      document.querySelector(".image-cropper").style.display = "block";
+      document.querySelector('.image-cropper').style.display = 'block';
 
       if (cropper) cropper.destroy();
       cropper = new Cropper(image, {
         aspectRatio: 1,
-        viewMode: 1
+        viewMode: 1,
       });
     };
     reader.readAsDataURL(input.files[0]);
@@ -205,28 +227,28 @@ document.getElementById('productForm').addEventListener('submit', async function
   function saveCroppedImage() {
     if (!cropper) return;
 
-    cropper.getCroppedCanvas().toBlob(blob => {
+    cropper.getCroppedCanvas().toBlob((blob) => {
       croppedBlobs.push(blob);
       addPreview(blob);
       updateHiddenInputs();
 
-      document.querySelector(".image-cropper").style.display = "none";
+      document.querySelector('.image-cropper').style.display = 'none';
       cropper.destroy();
       cropper = null;
-    }, "image/jpeg");
+    }, 'image/jpeg');
   }
 
   function addPreview(blob) {
-    const container = document.getElementById("imagePreviewContainer");
-    const wrapper = document.createElement("div");
-    wrapper.className = "thumbnail-wrapper";
+    const container = document.getElementById('imagePreviewContainer');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'thumbnail-wrapper';
 
-    const img = document.createElement("img");
+    const img = document.createElement('img');
     img.src = URL.createObjectURL(blob);
 
-    const removeBtn = document.createElement("div");
-    removeBtn.className = "remove-image";
-    removeBtn.innerHTML = "&times;";
+    const removeBtn = document.createElement('div');
+    removeBtn.className = 'remove-image';
+    removeBtn.innerHTML = '&times;';
     removeBtn.onclick = () => {
       croppedBlobs.splice([...container.children].indexOf(wrapper), 1);
       wrapper.remove();
@@ -239,69 +261,91 @@ document.getElementById('productForm').addEventListener('submit', async function
   }
 
   function updateHiddenInputs() {
-    const container = document.getElementById("hiddenImageInputs");
-    container.innerHTML = "";
+    const container = document.getElementById('hiddenImageInputs');
+    container.innerHTML = '';
 
     croppedBlobs.forEach((blob, i) => {
-      const file = new File([blob], `product-image-${i + 1}.jpg`, { type: "image/jpeg" });
+      const file = new File([blob], `product-image-${i + 1}.jpg`, {
+        type: 'image/jpeg',
+      });
       const dt = new DataTransfer();
       dt.items.add(file);
 
-      const input = document.createElement("input");
-      input.type = "file";
-      input.name = "images";
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.name = 'images';
       input.files = dt.files;
-      input.style.display = "none";
+      input.style.display = 'none';
       container.appendChild(input);
     });
   }
 
-function validateForm() {
-  let isValid = true;
-  const requiredFields = ["productName", "author", "description", "regularPrice", "salePrice", "quantity", "category"];
+  function validateForm() {
+    let isValid = true;
+    const requiredFields = [
+      'productName',
+      'author',
+      'description',
+      'regularPrice',
+      'salePrice',
+      'quantity',
+      'category',
+    ];
 
-  requiredFields.forEach(field => {
-    const value = document.getElementsByName(field)[0].value.trim();
-    const errorEl = document.getElementById(field + "-error");
-    if (!value) {
-      errorEl.innerText = `${field} is required`;
+    requiredFields.forEach((field) => {
+      const value = document.getElementsByName(field)[0].value.trim();
+      const errorEl = document.getElementById(field + '-error');
+      if (!value) {
+        errorEl.innerText = `${field} is required`;
+        isValid = false;
+      } else {
+        errorEl.innerText = '';
+      }
+    });
+
+    const regularPriceValue = document
+      .getElementsByName('regularPrice')[0]
+      .value.trim();
+    const salePriceValue = document
+      .getElementsByName('salePrice')[0]
+      .value.trim();
+
+    const price = parseFloat(regularPriceValue);
+    const sale = parseFloat(salePriceValue);
+
+    if (regularPriceValue && (isNaN(price) || price <= 1)) {
+      document.getElementById('regularPrice-error').innerText =
+        'Regular price must be greater than ₹1';
+      isValid = false;
+    }
+
+    if (
+      regularPriceValue &&
+      salePriceValue &&
+      !isNaN(price) &&
+      !isNaN(sale) &&
+      sale > price
+    ) {
+      document.getElementById('salePrice-error').innerText =
+        'Sale price cannot exceed regular price';
+      isValid = false;
+    }
+
+    // Image validation: at least 1 image (either existing or newly uploaded)
+    const uploadedImages = document.getElementById('uploadInput').files;
+    const existingImages = document.querySelectorAll('.thumbnail-wrapper img');
+    const totalImages = uploadedImages.length + existingImages.length;
+
+    if (totalImages < 3) {
+      document.getElementById('images-error').innerText =
+        'At least 3 images are required';
       isValid = false;
     } else {
-      errorEl.innerText = "";
+      document.getElementById('images-error').innerText = '';
     }
-  });
 
-  const regularPriceValue = document.getElementsByName("regularPrice")[0].value.trim();
-  const salePriceValue = document.getElementsByName("salePrice")[0].value.trim();
-
-  const price = parseFloat(regularPriceValue);
-  const sale = parseFloat(salePriceValue);
-
-  if (regularPriceValue && (isNaN(price) || price <= 1)) {
-    document.getElementById("regularPrice-error").innerText = "Regular price must be greater than ₹1";
-    isValid = false;
+    return isValid;
   }
-
-  if (regularPriceValue && salePriceValue && !isNaN(price) && !isNaN(sale) && sale > price) {
-    document.getElementById("salePrice-error").innerText = "Sale price cannot exceed regular price";
-    isValid = false;
-  }
-
-  // Image validation: at least 1 image (either existing or newly uploaded)
-  const uploadedImages = document.getElementById('uploadInput').files;
-  const existingImages = document.querySelectorAll('.thumbnail-wrapper img');
-  const totalImages = uploadedImages.length + existingImages.length;
-
-  if (totalImages < 3) {
-    document.getElementById("images-error").innerText = "At least 3 images are required";
-    isValid = false;
-  } else {
-    document.getElementById("images-error").innerText = "";
-  }
-
-  return isValid;
-}
-
 </script>
 
 <%- include("../../views/partials/admin/footer") %>

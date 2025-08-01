@@ -1,62 +1,53 @@
-const User=require('../models/userSchema')
+const User = require('../models/userSchema');
 const Cart = require('../models/cartSchema');
 
-
-
-
 const userAuth = async (req, res, next) => {
-    const sessionUser = req.session.user;
-    const passportUser = req.user;
+  const sessionUser = req.session.user;
+  const passportUser = req.user;
 
-    let userId = null;
+  let userId = null;
 
-    if (sessionUser) {
-        userId = sessionUser._id || sessionUser;
-    } else if (passportUser) {
-        userId = passportUser._id;
+  if (sessionUser) {
+    userId = sessionUser._id || sessionUser;
+  } else if (passportUser) {
+    userId = passportUser._id;
+  }
+
+  if (!userId) return res.redirect('/login');
+
+  try {
+    const user = await User.findById(userId);
+    if (user && !user.isBlocked) {
+      req.session.user = user; // Ensure session updated
+      res.locals.user = user;
+      return next();
+    } else {
+      return res.redirect('/login');
     }
-
-    if (!userId) return res.redirect('/login');
-
-    try {
-        const user = await User.findById(userId);
-        if (user && !user.isBlocked) {
-            req.session.user = user; // Ensure session updated
-            res.locals.user = user;
-            return next();
-        } else {
-            return res.redirect('/login');
-        }
-    } catch (err) {
-        console.log('Error in userAuth:', err);
-        return res.status(500).send('Internal server error');
-    }
+  } catch (err) {
+    console.log('Error in userAuth:', err);
+    return res.status(500).send('Internal server error');
+  }
 };
-
-
-
 
 const adminAuth = (req, res, next) => {
-    
-    if (req.session.admin && typeof req.session.admin === 'string') {
-        User.findById(req.session.admin)
-            .then(user => {
-                if (user && user.isAdmin && !user.isBlocked) {
-                    next();
-                } else {
-                    res.redirect('/admin/login');
-                }
-            })
-            .catch(error => {
-                console.log('Error in adminAuth middleware:', error);
-                res.status(500).send('Internal server error');
-            });
-    } else {
-        res.redirect('/admin/login');
-    }
+  if (req.session.admin && typeof req.session.admin === 'string') {
+    User.findById(req.session.admin)
+      .then((user) => {
+        if (user && user.isAdmin && !user.isBlocked) {
+          next();
+        } else {
+          res.redirect('/admin/login');
+        }
+      })
+      .catch((error) => {
+        console.log('Error in adminAuth middleware:', error);
+        res.status(500).send('Internal server error');
+      });
+  } else {
+    res.redirect('/admin/login');
+  }
 };
-
-
 
 const setUserCounts = async (req, res, next) => {
   try {
@@ -79,14 +70,13 @@ const setUserCounts = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Error in setUserCounts middleware:", error);
+    console.error('Error in setUserCounts middleware:', error);
     next(); // allow to continue without crashing
   }
 };
 
-
-module.exports={
-    userAuth,
-    adminAuth,
-    setUserCounts,
-}
+module.exports = {
+  userAuth,
+  adminAuth,
+  setUserCounts,
+};

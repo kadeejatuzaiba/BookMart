@@ -31,10 +31,10 @@ Version: 1.1
 
 /* Theme Colors */
 :root {
-  --accent-color: #C5A992;
-  --secondary-color: #C5A992;
+  --accent-color: #c5a992;
+  --secondary-color: #c5a992;
   --dark-color: #2f2f2f;
-  --light-color: #F3F2EC;
+  --light-color: #f3f2ec;
   --body-text-color: #757575;
   --light-text-color: #afafaf;
   --dark-text-color: #2f2f2f;
@@ -42,36 +42,36 @@ Version: 1.1
 
 /* Fonts */
 :root {
-  --body-font: "Raleway", sans-serif;
-  --heading-font: "Prata", Georgia, serif;
-  --secondary-font: "Playfair Display", Georgia, serif;
+  --body-font: 'Raleway', sans-serif;
+  --heading-font: 'Prata', Georgia, serif;
+  --secondary-font: 'Playfair Display', Georgia, serif;
 }
 
 /* Bootstrap variables */
 :root,
-[data-bs-theme=light] {
-  --heading-font: "Prata", Georgia, serif;
+[data-bs-theme='light'] {
+  --heading-font: 'Prata', Georgia, serif;
   --heading-font-weight: 400;
   --heading-color: var(--bs-dark);
   --heading-line-height: 1.1;
 
   --swiper-theme-color: var(--bs-primary);
 
-  --custom-easing: cubic-bezier(.17, .67, .83, .67);
+  --custom-easing: cubic-bezier(0.17, 0.67, 0.83, 0.67);
 
   /* theme colors */
-  --bs-body-font-family: "Raleway", arial, sans-serif;
+  --bs-body-font-family: 'Raleway', arial, sans-serif;
   --bs-body-font-size: 0.9rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.7;
   --bs-body-color: #333;
   --bs-body-color-rgb: 51, 51, 51;
 
-  --bs-primary: #C5A992;
-  --bs-primary-dark: #C5A992;
-  --bs-secondary: #C5A992;
+  --bs-primary: #c5a992;
+  --bs-primary-dark: #c5a992;
+  --bs-secondary: #c5a992;
   --bs-black: #111;
-  --bs-light: #F1F1F0;
+  --bs-light: #f1f1f0;
   --bs-dark: #212529;
   --bs-gray: #949494;
   --bs-gray-dark: #51565b;
@@ -248,16 +248,16 @@ a {
 /* form control */
 .form-control:focus {
   border-color: #ccc;
-  box-shadow: 0 0 0 0.25rem rgba(200, 200, 200, .25);
+  box-shadow: 0 0 0 0.25rem rgba(200, 200, 200, 0.25);
 }
 
 /* dark theme */
-[data-bs-theme=dark] {
+[data-bs-theme='dark'] {
   color-scheme: dark;
 
   --heading-color: #fff;
   --bs-heading-color: #fff;
-  --bs-link-color: #CCCCCC;
+  --bs-link-color: #cccccc;
   --bs-link-hover-color: var(--bs-primary);
   --bs-link-color-rgb: 204, 204, 204;
   --bs-link-hover-color-rgb: 131, 169, 172;
@@ -269,19 +269,25 @@ a {
   color: var(--bs-gray);
 }
 
-[data-bs-theme=dark] .dropdown-item {
+[data-bs-theme='dark'] .dropdown-item {
   --bs-dropdown-link-color: var(--bs-light);
   --bs-dropdown-link-hover-color: var(--bs-white);
 }
 
-[data-bs-theme=dark] .bg-white,
-[data-bs-theme=dark] .bg-light {
+[data-bs-theme='dark'] .bg-white,
+[data-bs-theme='dark'] .bg-light {
   --bs-bg-opacity: 0.1;
 }
 
 /* end of Bootstrap Color Theme */
 
-.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+.container,
+.container-fluid,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl,
+.container-xxl {
   --bs-gutter-x: 3rem;
 }
 
@@ -390,7 +396,6 @@ img {
   vertical-align: middle;
 }
 
-
 .main-logo img {
   width: 2000px;
   height: auto;
@@ -407,11 +412,6 @@ img {
     width: 150px;
   }
 }
-
-
-
-
-
 
 ::selection {
   background: rgba(0, 0, 0, 0.8);
@@ -503,13 +503,13 @@ h4,
 
 h5,
 .h5 {
-  font-size: .83em;
+  font-size: 0.83em;
   line-height: 1.25;
 }
 
 h6,
 .h6 {
-  font-size: .67em;
+  font-size: 0.67em;
   line-height: 1.1;
 }
 
@@ -594,7 +594,7 @@ abbr {
 .clearfix::after {
   display: block;
   clear: both;
-  content: "";
+  content: '';
 }
 
 /** Text Align
@@ -649,32 +649,32 @@ abbr {
 /*------------------------------------------------
 /* 2.3 Forms
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-input[type="email"],
-input[type="number"],
-input[type="search"],
-input[type="text"],
-input[type="tel"],
-input[type="url"],
-input[type="password"],
+input[type='email'],
+input[type='number'],
+input[type='search'],
+input[type='text'],
+input[type='tel'],
+input[type='url'],
+input[type='password'],
 textarea,
 select {
   padding: 6px 10px;
   /* The 6px vertically centers text on FF, ignored by Webkit */
   background-color: #fff;
-  border: 1px solid #D1D1D1;
+  border: 1px solid #d1d1d1;
   border-radius: 4px;
   box-shadow: none;
   box-sizing: border-box;
 }
 
 /* Removes awkward default styles on some inputs for iOS */
-input[type="email"],
-input[type="number"],
-input[type="search"],
-input[type="text"],
-input[type="tel"],
-input[type="url"],
-input[type="password"],
+input[type='email'],
+input[type='number'],
+input[type='search'],
+input[type='text'],
+input[type='tel'],
+input[type='url'],
+input[type='password'],
 textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -687,23 +687,23 @@ textarea {
   padding-bottom: 6px;
 }
 
-input[type="email"]:focus,
-input[type="number"]:focus,
-input[type="search"]:focus,
-input[type="text"]:focus,
-input[type="tel"]:focus,
-input[type="url"]:focus,
-input[type="password"]:focus,
+input[type='email']:focus,
+input[type='number']:focus,
+input[type='search']:focus,
+input[type='text']:focus,
+input[type='tel']:focus,
+input[type='url']:focus,
+input[type='password']:focus,
 textarea:focus,
 select:focus {
-  border: 1px solid #33C3F0;
+  border: 1px solid #33c3f0;
   outline: 0;
 }
 
 label,
 legend {
   display: block;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
 }
 
@@ -712,14 +712,14 @@ fieldset {
   border-width: 0;
 }
 
-input[type="checkbox"],
-input[type="radio"] {
+input[type='checkbox'],
+input[type='radio'] {
   display: inline;
 }
 
-label>.label-body {
+label > .label-body {
   display: inline-block;
-  margin-left: .5rem;
+  margin-left: 0.5rem;
   font-weight: normal;
 }
 
@@ -756,16 +756,16 @@ li {
 /* 2.5 Code
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 code {
-  padding: .2rem .5rem;
-  margin: 0 .2rem;
+  padding: 0.2rem 0.5rem;
+  margin: 0 0.2rem;
   font-size: 90%;
   white-space: nowrap;
-  background: #F1F1F1;
-  border: 1px solid #E1E1E1;
+  background: #f1f1f1;
+  border: 1px solid #e1e1e1;
   border-radius: 4px;
 }
 
-pre>code {
+pre > code {
   display: block;
   padding: 1rem 1.5rem;
   white-space: pre;
@@ -778,7 +778,7 @@ th,
 td {
   padding: 12px 15px;
   text-align: left;
-  border-bottom: 1px solid #E1E1E1;
+  border-bottom: 1px solid #e1e1e1;
 }
 
 th:first-child,
@@ -803,7 +803,7 @@ input,
 textarea,
 select,
 fieldset {
-  margin-bottom:0;
+  margin-bottom: 0;
 }
 
 pre,
@@ -858,17 +858,17 @@ hr {
   margin-top: 3rem;
   margin-bottom: 3.5rem;
   border-width: 0;
-  border-top: 1px solid #E1E1E1;
+  border-top: 1px solid #e1e1e1;
 }
 
 /*--------------------------------------------------------------
 /** 2.10 Buttons
 --------------------------------------------------------------*/
 a.btn,
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
-input[type="file"],
+input[type='button'],
+input[type='submit'],
+input[type='reset'],
+input[type='file'],
 button {
   background-image: none;
   background: var(--accent-color);
@@ -901,14 +901,14 @@ button {
 
 .btn:hover,
 .btn:focus,
-input[type="button"]:focus,
-input[type="button"]:hover,
-input[type="submit"]:focus,
-input[type="submit"]:hover,
-input[type="reset"]:focus,
-input[type="reset"]:hover,
-input[type="file"]:focus,
-input[type="file"]:hover,
+input[type='button']:focus,
+input[type='button']:hover,
+input[type='submit']:focus,
+input[type='submit']:hover,
+input[type='reset']:focus,
+input[type='reset']:hover,
+input[type='file']:focus,
+input[type='file']:hover,
 button:focus,
 button:hover {
   text-decoration: none;
@@ -927,10 +927,10 @@ button:hover {
 .btn.btn-outline-light:active,
 .btn.btn-outline-dark:active,
 .btn.btn-outline-accent:active,
-input[type="button"]:active,
-input[type="submit"]:active,
-input[type="reset"]:active,
-input[type="file"]:active,
+input[type='button']:active,
+input[type='submit']:active,
+input[type='reset']:active,
+input[type='file']:active,
 button:active {
   outline: 0;
   background-image: none;
@@ -1016,7 +1016,7 @@ fieldset[disabled] a.btn {
 }
 
 .btn.btn-outline-dark:hover {
-  background: rgba(0, 0, 0, .03);
+  background: rgba(0, 0, 0, 0.03);
   background: #121212;
   border-color: #121212;
   color: #fff;
@@ -1046,7 +1046,7 @@ fieldset[disabled] a.btn {
 
 .btn.btn-full {
   display: block;
-  margin: .85em 0;
+  margin: 0.85em 0;
   width: 100%;
   text-align: center;
 }
@@ -1058,7 +1058,7 @@ fieldset[disabled] a.btn {
 }
 
 .btn-with-line:after {
-  content: "";
+  content: '';
   position: absolute;
   top: 8px;
   right: -66px;
@@ -1142,7 +1142,6 @@ fieldset[disabled] a.btn {
   display: block;
 }
 
-
 /*====================================================================*/
 /* 5. CONTENT ELEMENTS */
 /*====================================================================*/
@@ -1162,7 +1161,10 @@ fieldset[disabled] a.btn {
   display: block;
   padding: 0.5rem 1rem;
   text-decoration: none;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1228,18 +1230,18 @@ fieldset[disabled] a.btn {
 }
 
 .nav-pills .nav-link.active,
-.nav-pills .show>.nav-link {
+.nav-pills .show > .nav-link {
   color: #fff;
   background-color: #0d6efd;
 }
 
-.nav-fill>.nav-link,
+.nav-fill > .nav-link,
 .nav-fill .nav-item {
   flex: 1 1 auto;
   text-align: center;
 }
 
-.nav-justified>.nav-link,
+.nav-justified > .nav-link,
 .nav-justified .nav-item {
   flex-basis: 0;
   flex-grow: 1;
@@ -1255,11 +1257,11 @@ fieldset[disabled] a.btn {
   padding: 20px 0;
 }
 
-.bootstrap-tabs .tab-content>.tab-pane {
+.bootstrap-tabs .tab-content > .tab-pane {
   display: none;
 }
 
-.bootstrap-tabs .tab-content>.active {
+.bootstrap-tabs .tab-content > .active {
   display: block;
 }
 
@@ -1310,7 +1312,12 @@ fieldset[disabled] a.btn {
   border-radius: 0;
   box-shadow: none;
   overflow-anchor: none;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out,
+    border-radius 0.15s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1334,7 +1341,7 @@ fieldset[disabled] a.btn {
   width: 1.25rem;
   height: 1.25rem;
   margin-left: auto;
-  content: "";
+  content: '';
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-size: 1.25rem;
@@ -1395,7 +1402,6 @@ fieldset[disabled] a.btn {
 /*--------------------------------------------------------------
 This is main CSS file that contains custom style rules used in this template
 --------------------------------------------------------------*/
-
 
 /* - Section Padding
 --------------------------------------------------------------*/
@@ -1469,7 +1475,6 @@ This is main CSS file that contains custom style rules used in this template
 }
 
 @media only screen and (max-width: 768px) {
-
   .margin-small,
   .margin-medium,
   .margin-large,
@@ -1501,7 +1506,7 @@ button {
 }
 
 .btn-wrap a:hover {
-  color: #74642F;
+  color: #74642f;
 }
 
 .btn-normal {
@@ -1573,7 +1578,6 @@ button {
   transform: scale(1.1);
 }
 
-
 /*--- Pattern Overlay
 -----------------------------------------------*/
 .pattern-overlay {
@@ -1627,8 +1631,8 @@ button {
 }
 
 .section-title.divider:after {
-  content: "";
-  border-bottom: 3px solid #74642F;
+  content: '';
+  border-bottom: 3px solid #74642f;
   position: absolute;
   right: 0;
   bottom: -16px;
@@ -1638,8 +1642,8 @@ button {
 
 .section-header .section-title:before,
 .section-header .section-title:after {
-  content: "";
-  border-bottom: 1px solid #E0E0E0;
+  content: '';
+  border-bottom: 1px solid #e0e0e0;
   position: absolute;
   top: 30px;
   width: 25%;
@@ -1660,9 +1664,7 @@ button {
   text-transform: uppercase;
 }
 
-
 @media screen and (max-width: 1366px) {
-
   .section-header .section-title:before,
   .section-header .section-title:after {
     width: 30%;
@@ -1670,7 +1672,6 @@ button {
 }
 
 @media screen and (max-width: 999px) {
-
   .section-header .section-title:before,
   .section-header .section-title:after {
     width: 25%;
@@ -1722,7 +1723,7 @@ img.post-image {
 --------------------------------------------------------------*/
 .top-content {
   padding: 15px 0;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .social-links ul {
@@ -1749,11 +1750,9 @@ img.post-image {
   text-decoration: none;
 }
 
- .top-content .right-element {
+.top-content .right-element {
   text-align: right;
-} 
-
-
+}
 
 .top-content .right-element .for-buy {
   margin-right: 40px;
@@ -1849,9 +1848,8 @@ img.post-image {
 /* - Main Navigation
 ------------------------------------------------------------- */
 #header {
-  
   padding: 20px 0;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid #e0e0e0;
   background-color: #f3f2ec;
 }
 
@@ -1902,7 +1900,7 @@ img.post-image {
 
 #billboard button.slick-arrow {
   background: transparent;
-  border: 1px solid #E5E3DA;
+  border: 1px solid #e5e3da;
   padding: initial;
   width: 50px;
   height: 50px;
@@ -1914,8 +1912,8 @@ img.post-image {
 }
 
 #billboard button.slick-arrow:hover {
-  border: 1px solid #74642F;
-  background-color: #E5E3DA;
+  border: 1px solid #74642f;
+  background-color: #e5e3da;
 }
 
 #billboard button.prev.slick-arrow {
@@ -1927,7 +1925,7 @@ img.post-image {
 }
 
 #billboard .slick-arrow i.icon {
-  color: #8C8C8C;
+  color: #8c8c8c;
 }
 
 @media screen and (max-width: 1366px) {
@@ -1974,7 +1972,7 @@ img.post-image {
 /*----- Cient-holder Section
 --------------------------------------------------------------*/
 #client-holder {
-  background: #EDEBE4;
+  background: #edebe4;
   padding: 105px 0;
 }
 
@@ -1987,14 +1985,14 @@ img.post-image {
 --------------------------------------------------------------*/
 
 #featured-books .product-list {
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid #e0e0e0;
   margin-bottom: 30px;
 }
 
 /*----- Best Selling Section Section
 --------------------------------------------------------------*/
 #best-selling {
-  background: #EDEBE4;
+  background: #edebe4;
   padding: 120px 0;
 }
 
@@ -2015,7 +2013,7 @@ img.post-image {
 
 #best-selling .product-entry .item-price {
   font-size: 1.5em;
-  color: #74642F;
+  color: #74642f;
   margin-bottom: 40px;
 }
 
@@ -2062,7 +2060,7 @@ img.post-image {
 .tabs .tab.active,
 .tabs .tab:hover {
   color: #111;
-  border-bottom: 2px solid #9A884C;
+  border-bottom: 2px solid #9a884c;
 }
 
 img.books-image {
@@ -2091,7 +2089,7 @@ img.books-image {
 }
 
 #quotation .author-name {
-  font-family: "Prata", Georgia, serif;
+  font-family: 'Prata', Georgia, serif;
   font-size: 1.4em;
 }
 
@@ -2111,7 +2109,7 @@ img.books-image {
 /*----- Special Offer Section
 --------------------------------------------------------------*/
 #special-offer .section-header {
-  background: #EDEBE4;
+  background: #edebe4;
   padding: 140px 0 220px;
   margin-bottom: -141px;
   z-index: -1;
@@ -2129,11 +2127,10 @@ span.prev-price {
   text-decoration: line-through;
 }
 
-
 /*----- Subscribe Section
 --------------------------------------------------------------*/
 #subscribe {
-  background: #EDEBE4;
+  background: #edebe4;
   padding: 120px 0;
 }
 
@@ -2141,7 +2138,7 @@ span.prev-price {
   margin-left: 15px;
 }
 
-#subscribe .subscribe-content input[type="text"] {
+#subscribe .subscribe-content input[type='text'] {
   background: none;
   border: none;
   width: 252px;
@@ -2150,26 +2147,25 @@ span.prev-price {
 #subscribe form#form {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #6F6F6F;
+  border-bottom: 1px solid #6f6f6f;
 }
 
 ::-webkit-input-placeholder {
-  color: #7A7A7A;
+  color: #7a7a7a;
   /* WebKit browsers */
 }
 
 :-ms-input-placeholder {
-  color: #7A7A7A;
+  color: #7a7a7a;
   /* Internet Explorer 10+ */
 }
-
 
 @media screen and (max-width: 1200px) {
   #subscribe form#form {
     width: 90%;
   }
 
-  #subscribe .subscribe-content input[type="text"] {
+  #subscribe .subscribe-content input[type='text'] {
     width: 100%;
   }
 
@@ -2179,7 +2175,6 @@ span.prev-price {
 }
 
 @media screen and (max-width: 980px) {
-
   /*#subscribe .grid {
       flex-wrap: wrap;
       justify-content: center;
@@ -2211,7 +2206,6 @@ span.prev-price {
   #subscribe {
     margin-bottom: 90px;
   }
-
 }
 
 /*
@@ -2224,10 +2218,8 @@ span.prev-price {
   }
 }*/
 
-
 /*----- Latest Blog Section
 --------------------------------------------------------------*/
-
 
 #latest-blog article.column {
   margin-bottom: 60px;
@@ -2238,8 +2230,8 @@ span.prev-price {
 }
 
 #latest-blog .meta-date {
-  font-family: "Prata", Georgia, serif;
-  color: #74642F;
+  font-family: 'Prata', Georgia, serif;
+  color: #74642f;
   padding-bottom: 20px;
 }
 
@@ -2252,7 +2244,7 @@ span.prev-price {
 #latest-blog .links-element {
   display: flex;
   justify-content: space-between;
-  border-top: 1px solid #C8C8C8;
+  border-top: 1px solid #c8c8c8;
   padding-top: 20px;
 }
 
@@ -2283,7 +2275,7 @@ span.prev-price {
 /*----- Contact Section
 --------------------------------------------------------------*/
 #download-app {
-  background: #EDEBE4;
+  background: #edebe4;
   padding: 120px 0;
   overflow: hidden;
   z-index: 0;
@@ -2327,7 +2319,7 @@ footer#footer {
   padding-bottom: 80px;
   margin-top: 100px;
   margin-bottom: 60px;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 #footer .footer-item {
@@ -2396,8 +2388,8 @@ footer#footer {
 
 .product-style img.product-item {
   position: relative;
-  background: #EFEEE8;
-  border: 1px solid #EAE8DF;
+  background: #efeee8;
+  border: 1px solid #eae8df;
   padding: 15%;
   cursor: pointer;
   width: 100%;
@@ -2430,18 +2422,18 @@ footer#footer {
   text-align: center;
 }
 
-.product-item figcaption>h3 {
+.product-item figcaption > h3 {
   font-size: 1.4em;
   font-weight: 500;
-  color: #74642F;
+  color: #74642f;
   margin: 0;
 }
-.product-item figcaption>p {
+.product-item figcaption > p {
   margin: 0;
 }
 
 .product-item .item-price {
-  color: #74642F;
+  color: #74642f;
   font-size: 1.3em;
 }
 

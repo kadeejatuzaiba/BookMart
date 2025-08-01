@@ -1,27 +1,27 @@
 const Order = require('../../models/orderSchema');
-const User  = require('../../models/userSchema');
+const User = require('../../models/userSchema');
 const Address = require('../../models/addressSchema');
-const Product=require('../../models/productSchema')
+const Product = require('../../models/productSchema');
 const listOrders = async (req, res) => {
   try {
     const {
-      page       = 1,
-      search     = '',
-      status     = 'all',
-      sortField  = 'createdOn',
-      sortOrder  = 'desc'
+      page = 1,
+      search = '',
+      status = 'all',
+      sortField = 'createdOn',
+      sortOrder = 'desc',
     } = req.query;
 
-    const limit = 4;                                // 8 rows per page
-    const skip  = (page - 1) * limit;
+    const limit = 4; // 8 rows per page
+    const skip = (page - 1) * limit;
 
     const filter = {};
-    if (search)               filter.orderId = { $regex: search, $options: 'i' };
-    if (status && status !== 'all') filter.status  = status;
+    if (search) filter.orderId = { $regex: search, $options: 'i' };
+    if (status && status !== 'all') filter.status = status;
 
-    const total   = await Order.countDocuments(filter);
-    const orders  = await Order.find(filter)
-      .populate('user', 'name email')             // only need name/email
+    const total = await Order.countDocuments(filter);
+    const orders = await Order.find(filter)
+      .populate('user', 'name email') // only need name/email
       .sort({ [sortField]: sortOrder === 'asc' ? 1 : -1 })
       .skip(skip)
       .limit(limit)
@@ -29,12 +29,12 @@ const listOrders = async (req, res) => {
 
     res.render('orderPage', {
       orders,
-      searchQuery : search,
-      currentPage : Number(page),
-      totalPages  : Math.ceil(total / limit),
+      searchQuery: search,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
       status: req.query.status || 'all',
-  sortField: req.query.sortField || 'createdOn',
-  sortOrder: req.query.sortOrder || 'desc'
+      sortField: req.query.sortField || 'createdOn',
+      sortOrder: req.query.sortOrder || 'desc',
     });
   } catch (err) {
     console.error(err);
@@ -42,17 +42,26 @@ const listOrders = async (req, res) => {
   }
 };
 
-
 const updateStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
 
     if (!id || !status) {
-      return res.status(400).json({ ok: false, msg: 'Order ID and status are required' });
+      return res
+        .status(400)
+        .json({ ok: false, msg: 'Order ID and status are required' });
     }
 
-    const allowedStatuses = ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled', 'Return Request', 'returned'];
+    const allowedStatuses = [
+      'Pending',
+      'Confirmed',
+      'Shipped',
+      'Delivered',
+      'Cancelled',
+      'Return Request',
+      'returned',
+    ];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ ok: false, msg: 'Invalid status value' });
     }
@@ -76,8 +85,9 @@ const updateStatus = async (req, res) => {
     order.status = status;
     await order.save();
 
-    res.status(200).json({ ok: true, msg: 'Status updated successfully', order });
-
+    res
+      .status(200)
+      .json({ ok: true, msg: 'Status updated successfully', order });
   } catch (err) {
     console.error('Error updating order status:', err);
     res.status(500).json({ ok: false, msg: 'Internal server error' });
@@ -91,13 +101,16 @@ const verifyReturnRequest = async (req, res) => {
     // 1. Get the order
     const order = await Order.findById(orderId);
     if (!order || order.status !== 'Return Request') {
-      return res.status(400).json({ ok: false, msg: 'Return verification not allowed' });
+      return res
+        .status(400)
+        .json({ ok: false, msg: 'Return verification not allowed' });
     }
 
     // 2. Get the user
     const userId = order.user._id || order.user;
-    const user   = await User.findById(userId);
-    if (!user) return res.status(404).json({ ok: false, msg: 'User not found' });
+    const user = await User.findById(userId);
+    if (!user)
+      return res.status(404).json({ ok: false, msg: 'User not found' });
 
     // 3. Credit the refund to wallet
     const refundAmount = order.finalAmount;
@@ -110,12 +123,12 @@ const verifyReturnRequest = async (req, res) => {
       type: 'credit',
       amount: refundAmount,
       description: `Refund - cancelled order ${order._id}`,
-      orderId: order._id
+      orderId: order._id,
     });
     await user.save();
 
     // 4. Mark items + order as returned
-    order.orderedItems.forEach(item => {
+    order.orderedItems.forEach((item) => {
       if (item.status === 'Return Request') item.status = 'returned';
     });
     order.status = 'returned';
@@ -125,7 +138,7 @@ const verifyReturnRequest = async (req, res) => {
     for (const item of order.orderedItems) {
       if (item.status === 'returned') {
         await Product.findByIdAndUpdate(item.product, {
-          $inc: { quantity: item.quantity }
+          $inc: { quantity: item.quantity },
         });
       }
     }
@@ -137,13 +150,14 @@ const verifyReturnRequest = async (req, res) => {
   }
 };
 
-
 const viewAdminOrderDetails = async (req, res) => {
   try {
     const orderId = req.params.id;
 
     // populate both product and user
-    const order = await Order.findById(orderId).populate('orderedItems.product user');
+    const order = await Order.findById(orderId).populate(
+      'orderedItems.product user'
+    );
 
     if (!order) {
       return res.status(404).send('Order not found');
@@ -152,16 +166,16 @@ const viewAdminOrderDetails = async (req, res) => {
     const userId = order.user._id; // ✅ define userId from order.user
 
     const addressDoc = await Address.findOne({ userId }).lean();
-    const selectedAddress = addressDoc?.address.find(addr => String(addr._id) === String(order.address));
+    const selectedAddress = addressDoc?.address.find(
+      (addr) => String(addr._id) === String(order.address)
+    );
 
     res.render('order-details-admin', {
       order,
       user: order.user,
-      address: selectedAddress // ✅ pass it as 'address' to match your EJS
+      address: selectedAddress, // ✅ pass it as 'address' to match your EJS
     });
-
   } catch (err) {
-    
     console.error('Error loading order details:', err);
     res.status(500).send('Server error');
   }
@@ -192,7 +206,7 @@ const verifyProductReturn = async (req, res) => {
       type: 'credit',
       amount: refundAmount,
       description: `Refund - returned product ${item.product}`,
-      orderId: order._id
+      orderId: order._id,
     });
     await user.save();
 
@@ -201,29 +215,28 @@ const verifyProductReturn = async (req, res) => {
 
     // 3. Update product stock
     await Product.findByIdAndUpdate(item.product, {
-      $inc: { quantity: item.quantity }
+      $inc: { quantity: item.quantity },
     });
 
     // 4. If all items returned, mark whole order as returned
-    const allReturned = order.orderedItems.every(i => i.status === 'returned');
+    const allReturned = order.orderedItems.every(
+      (i) => i.status === 'returned'
+    );
     if (allReturned) order.status = 'returned';
 
     await order.save();
 
     res.redirect(`/admin/viewDetails/${orderId}`);
-
   } catch (err) {
     console.error('verifyProductReturn error:', err);
     res.status(500).send('Server error');
   }
 };
 
-
-module.exports={
-    listOrders,
-    updateStatus,
-    verifyReturnRequest,
-    viewAdminOrderDetails,
-    verifyProductReturn
-  
-}
+module.exports = {
+  listOrders,
+  updateStatus,
+  verifyReturnRequest,
+  viewAdminOrderDetails,
+  verifyProductReturn,
+};

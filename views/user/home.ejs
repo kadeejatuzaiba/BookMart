@@ -1,170 +1,169 @@
+<!-- Include the header.ejs here -->
+<%- include('../partials/user/header') %>
+<style>
+  .wishlist-btn {
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 18px;
+    line-height: 1;
+    background-color: #fff;
+    border: none;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    transition: transform 0.2s ease;
+  }
 
+  .wishlist-btn:hover {
+    transform: scale(1.1);
+  }
 
-    <!-- Include the header.ejs here -->
-	<%- include('../partials/user/header') %>
-	<style>
-	.wishlist-btn {
-  top: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  padding: 0;
-  font-size: 18px;
-  line-height: 1;
-  background-color: #fff;
-  border: none;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  transition: transform 0.2s ease;
-}
-
-.wishlist-btn:hover {
-  transform: scale(1.1);
-}
-
-#billboard {
-  background-image: url('images/bg-img3.png'); /* Add correct file extension */
-  background-repeat: no-repeat;
-  background-size: cover;       /* Makes it fill the section */
-  background-position: center;  /* Centers the image */
-}
-
+  #billboard {
+    background-image: url('images/bg-img3.png'); /* Add correct file extension */
+    background-repeat: no-repeat;
+    background-size: cover; /* Makes it fill the section */
+    background-position: center; /* Centers the image */
+  }
 </style>
 <section id="billboard">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-
-				<button class="prev slick-arrow">
-					<i class="icon icon-arrow-left"></i>
-				</button>
-
-				<div class="main-slider ">
-					
-					<!-- Slide 1 -->
-					<div class="slider-item">
-						<div class="banner-content">
-							<h2 class="banner-title">Discover Your Next Great Read</h2>
-							<p>Explore handpicked titles, timeless classics, and new favorites. Curated with love for book lovers like you.</p>
-							<div class="btn-wrap">
-								<a href="#" class="btn btn-outline-accent btn-accent-arrow">Shop Now
-									<i class="icon icon-ns-arrow-right"></i></a>
-							</div>
-						</div>
-						<!-- <img src="images/bg-img7" alt="banner" class="banner-image"> -->
-					</div>
-
-					<!-- Slide 2 -->
-					<div class="slider-item" >
-						<div class="banner-content">
-							<h2 class="banner-title">A Book for Every Mind</h2>
-							<p>Dive into stories that inspire, educate, and entertain. Find your next must-read from our wide collection.</p>
-							<div class="btn-wrap">
-								<a href="#" class="btn btn-outline-accent btn-accent-arrow">Browse Collection
-									<i class="icon icon-ns-arrow-right"></i></a>
-							</div>
-						</div>
-						<!-- <img src="images/bg-img8" alt="banner" class="banner-image"> -->
-					</div>
-
-				</div><!-- main-slider -->
-
-				<button class="next slick-arrow">
-					<i class="icon icon-arrow-right"></i>
-				</button>
-
-			</div>
-		</div>
-	</div>
-</section>
-
-
-	<section id="featured-books" class="py-2 mt-0 mb-5">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="section-header text-center mb-4">
-					<h2 class="section-title">New Arrivals</h2>
-				</div>
-
-				<div class="product-list" data-aos="fade-up">
-					<div class="row">
-						<% for (let i = 0; i < products.length; i++) { %>
-							
-							<div class="col-md-3 mb-4">
-                
-					<div class="product-item border rounded p-3 text-center shadow-sm position-relative">
-
-  <!-- Heart button in top-right -->
-<button type="button" 
-        class="btn wishlist-btn position-absolute top-0 end-0 m-2 shadow-sm add-to-wishlist" 
-        data-id="<%= products[i]._id %>" 
-        title="Add to Wishlist">
-  ❤️
-</button>
-
-
-
-  <figure class="product-style">
-    <a href="/productDetails?id=<%= products[i]._id %>">
-      <% if (products[i].image && products[i].image.length > 0) { %>
-        <img src="/uploads/product-images/<%= products[i].image[0] %>" 
-             alt="<%= products[i].productName %>" 
-             class="img-fluid mb-3" 
-             style="height: 250px; object-fit: cover;">
-      <% } else { %>
-        <img src="/images/default-book.jpg" 
-             alt="No image available" 
-             class="img-fluid mb-3" 
-             style="height: 250px; object-fit: cover;">
-      <% } %>
-    </a>
-  </figure>
-
-
-    <figcaption class="mt-3">
-      <h3><%= products[i].productName %></h3>
-      <p class="text-muted mb-1"><%= products[i].author %></p>
-
-
-      <!-- Styled Buttons -->
-      <div class="d-flex justify-content-center gap-2">
-        <button type="button" 
-                class="btn btn-small btn-accent btn-pill add-to-cart" 
-                data-id="<%= products[i]._id %>">
-          <i class="fa fa-shopping-cart me-1"></i> Add to Cart
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <button class="prev slick-arrow">
+          <i class="icon icon-arrow-left"></i>
         </button>
-        
+
+        <div class="main-slider">
+          <!-- Slide 1 -->
+          <div class="slider-item">
+            <div class="banner-content">
+              <h2 class="banner-title">Discover Your Next Great Read</h2>
+              <p>
+                Explore handpicked titles, timeless classics, and new favorites.
+                Curated with love for book lovers like you.
+              </p>
+              <div class="btn-wrap">
+                <a href="#" class="btn btn-outline-accent btn-accent-arrow"
+                  >Shop Now <i class="icon icon-ns-arrow-right"></i
+                ></a>
+              </div>
+            </div>
+            <!-- <img src="images/bg-img7" alt="banner" class="banner-image"> -->
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="slider-item">
+            <div class="banner-content">
+              <h2 class="banner-title">A Book for Every Mind</h2>
+              <p>
+                Dive into stories that inspire, educate, and entertain. Find
+                your next must-read from our wide collection.
+              </p>
+              <div class="btn-wrap">
+                <a href="#" class="btn btn-outline-accent btn-accent-arrow"
+                  >Browse Collection <i class="icon icon-ns-arrow-right"></i
+                ></a>
+              </div>
+            </div>
+            <!-- <img src="images/bg-img8" alt="banner" class="banner-image"> -->
+          </div>
+        </div>
+        <!-- main-slider -->
+
+        <button class="next slick-arrow">
+          <i class="icon icon-arrow-right"></i>
+        </button>
       </div>
-    </figcaption>
+    </div>
   </div>
-</div>
-							<% if ((i + 1) % 4 === 0 && i !== products.length - 1) { %>
-								</div><div class="row">
-							<% } %>
-						<% } %>
-					</div>
-				</div>
-
-				<div class="row mt-4">
-					<div class="col-md-12 text-end">
-						<a href="/shop" class="btn btn-primary">
-							View all products <i class="fa fa-arrow-right ms-1"></i>
-						</a>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</div>
 </section>
 
+<section id="featured-books" class="py-2 mt-0 mb-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="section-header text-center mb-4">
+          <h2 class="section-title">New Arrivals</h2>
+        </div>
 
-	     
+        <div class="product-list" data-aos="fade-up">
+          <div class="row">
+            <% for (let i = 0; i < products.length; i++) { %>
+
+            <div class="col-md-3 mb-4">
+              <div
+                class="product-item border rounded p-3 text-center shadow-sm position-relative"
+              >
+                <!-- Heart button in top-right -->
+                <button
+                  type="button"
+                  class="btn wishlist-btn position-absolute top-0 end-0 m-2 shadow-sm add-to-wishlist"
+                  data-id="<%= products[i]._id %>"
+                  title="Add to Wishlist"
+                >
+                  ❤️
+                </button>
+
+                <figure class="product-style">
+                  <a href="/productDetails?id=<%= products[i]._id %>">
+                    <% if (products[i].image && products[i].image.length > 0) {
+                    %>
+                    <img
+                      src="/uploads/product-images/<%= products[i].image[0] %>"
+                      alt="<%= products[i].productName %>"
+                      class="img-fluid mb-3"
+                      style="height: 250px; object-fit: cover"
+                    />
+                    <% } else { %>
+                    <img
+                      src="/images/default-book.jpg"
+                      alt="No image available"
+                      class="img-fluid mb-3"
+                      style="height: 250px; object-fit: cover"
+                    />
+                    <% } %>
+                  </a>
+                </figure>
+
+                <figcaption class="mt-3">
+                  <h3><%= products[i].productName %></h3>
+                  <p class="text-muted mb-1"><%= products[i].author %></p>
+
+                  <!-- Styled Buttons -->
+                  <div class="d-flex justify-content-center gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-small btn-accent btn-pill add-to-cart"
+                      data-id="<%= products[i]._id %>"
+                    >
+                      <i class="fa fa-shopping-cart me-1"></i> Add to Cart
+                    </button>
+                  </div>
+                </figcaption>
+              </div>
+            </div>
+            <% if ((i + 1) % 4 === 0 && i !== products.length - 1) { %>
+          </div>
+          <div class="row"><% } %> <% } %></div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-12 text-end">
+            <a href="/shop" class="btn btn-primary">
+              View all products <i class="fa fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <%- include('../partials/user/footer') %>
