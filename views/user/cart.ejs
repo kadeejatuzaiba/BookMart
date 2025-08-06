@@ -42,7 +42,10 @@
             </tr>
           </thead>
           <tbody>
-            <% items.forEach(i => { const p = i.productId; %>
+           <% items.forEach(i => { 
+     const p = i.productId;
+     if (!p) return; 
+%>
               <tr>
                 <td>
                   <img src="/uploads/product-images/<%= p.image[0] %>"
@@ -59,7 +62,7 @@
 </td>
 
 
-                <td>
+                <!-- <td>
                   <div class="d-flex justify-content-center align-items-center">
                     <form action="/decrease-quantity/<%= i._id %>" method="POST" style="display:inline;">
                       <button type="submit" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">-</button>
@@ -69,7 +72,17 @@
                       <button type="submit" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">+</button>
                     </form>
                   </div>
-                </td>
+                </td> -->
+
+
+                <td>
+  <div class="d-flex justify-content-center align-items-center">
+    <button onclick="updateQuantity('<%= i._id %>', 'decrease')" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">-</button>
+    <span class="mx-2" id="qty-<%= i._id %>"><%= i.quantity %></span>
+    <button onclick="updateQuantity('<%= i._id %>', 'increase')" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">+</button>
+  </div>
+</td>
+
 
 
                 <td>₹<%= p.salePrice * i.quantity %></td>
@@ -83,6 +96,7 @@
           </tbody>
         </table>
       </div>
+      
 
       <!-- Cart Total Section -->
       <div class="row justify-content-center mt-4">
@@ -119,5 +133,28 @@
     });
   }
 
+
 </script>
+<script>
+async function updateQuantity(itemId, action) {
+  try {
+    const res = await fetch(`/update-quantity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemId, action })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById(`qty-${itemId}`).textContent = data.newQuantity;
+      location.reload(); // Optional: You can update price/cart total dynamically instead of reload
+    } else {
+      alert(data.message || 'Error updating quantity');
+    }
+  } catch (err) {
+    console.error('Error:', err);
+  }
+}
+</script>
+
 <%- include('../partials/user/footer') %>

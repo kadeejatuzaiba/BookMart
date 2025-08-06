@@ -21,15 +21,22 @@ const loadWishlist=async(req,res)=>{
     }
 } 
 
-const addToWishlist = async (req, res) => {
+
+const toggleWishlist = async (req, res) => {
   try {
     const productId = req.body.productId;
     const userId = req.session.user;
 
+    if (!userId) {
+      return res.status(200).json({
+        status: false,
+        message: 'You must be logged in to use wishlist.',
+      });
+    }
+
     const user = await User.findById(userId);
     const cart = await Cart.findOne({ userId });
 
-    // ✅ Check if product is already in cart
     const isInCart = cart?.items?.some(item => item.productId.toString() === productId);
     if (isInCart) {
       return res.status(200).json({
@@ -38,30 +45,36 @@ const addToWishlist = async (req, res) => {
       });
     }
 
-    // ✅ Check if product already in wishlist
-    if (user.wishlist.includes(productId)) {
+    const index = user.wishlist.indexOf(productId);
+
+    if (index > -1) {
+      user.wishlist.splice(index, 1);
+      await user.save();
       return res.status(200).json({
-        status: false,
-        message: 'Product already in wishlist',
+        status: true,
+        action: 'removed',
+        message: 'Product removed from wishlist'
+      });
+    } else {
+      user.wishlist.push(productId);
+      await user.save();
+      return res.status(200).json({
+        status: true,
+        action: 'added',
+        message: 'Product added to wishlist'
       });
     }
-
-    user.wishlist.push(productId);
-    await user.save();
-
-    return res.status(200).json({
-      status: true,
-      message: 'Product added to wishlist',
-    });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({
       status: false,
-      message: 'Server Error',
+      message: 'Server error'
     });
   }
 };
+
+
 const removeProduct=async(req,res)=>{
     try {
         const productId=req.query.productId;
@@ -78,6 +91,6 @@ const removeProduct=async(req,res)=>{
 }
 module.exports={
     loadWishlist,
-    addToWishlist,
+    toggleWishlist,
     removeProduct,
 }

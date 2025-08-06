@@ -217,12 +217,24 @@
 
 
   <!-- Heart button in top-right -->
-<button type="button" onclick="addToWishlist('<%=products[i]._id%>')"
+<!-- <button type="button" onclick="addToWishlist('<%=products[i]._id%>')"
         class="btn wishlist-btn position-absolute top-0 end-0 m-2 shadow-sm add-to-wishlist" 
         data-id="<%= products[i]._id %>" 
         title="Add to Wishlist">
   ❤️
+</button> -->
+
+
+<button type="button"
+  onclick="toggleWishlist('<%= products[i]._id %>', this)"
+  class="btn wishlist-btn position-absolute top-0 end-0 m-2 shadow-sm add-to-wishlist"
+  data-id="<%= products[i]._id %>"
+  title="Add to Wishlist">
+  <%= user?.wishlist.includes(products[i]._id.toString()) ? '❤️' : '🤍' %>
 </button>
+
+
+
                           <figure class="product-style">
                             <a href="/productDetails?id=<%= products[i]._id %>">
                               <% if (products[i].image && products[i].image.length > 0) { %>
@@ -380,52 +392,54 @@
       });
     }
   });
-function addToWishlist(productId) {
+
+function toggleWishlist(productId, btn) {
   $.ajax({
-    url: '/addToWishlist',
+    url: '/toggleWishlist',
     method: 'POST',
     data: { productId },
     success: (response) => {
       if (response.status) {
-        // ✅ Successfully added
-        Swal.fire({
-          title: "Added to wishlist",
-          text: response.message,
-          icon: 'success',
-          timer: 2000
-        });
-      } else {
-        // ⚠️ Show warning based on reason
-        let title = "Already Exists";
-        let icon = "info";
-
-        if (response.message.includes("cart")) {
-          title = "Already in Cart";
-          icon = "warning";
-        } else if (response.message.includes("wishlist")) {
-          title = "Already in Wishlist";
-          icon = "info";
+        // Toggle icon based on action
+        if (response.action === 'added') {
+          btn.innerText = '❤️';
+          Swal.fire({
+            title: "Added to wishlist",
+            text: response.message,
+            icon: 'success',
+            timer: 1500
+          });
+        } else {
+          btn.innerText = '🤍';
+          Swal.fire({
+            title: "Removed from wishlist",
+            text: response.message,
+            icon: 'info',
+            timer: 1500
+          });
         }
-
+      } else {
         Swal.fire({
-          title: title,
+          title: "Warning",
           text: response.message,
-          icon: icon,
-          timer: 2000
+          icon: 'warning',
+          timer: 1500
         });
       }
     },
     error: () => {
-      // ❌ Server/network error
       Swal.fire({
         title: 'Error',
-        text: 'Something went wrong while adding to wishlist',
+        text: 'Something went wrong',
         icon: 'error',
-        timer: 2000
+        timer: 1500
       });
     }
   });
 }
+
+
+
 function addToCart(productId) {
   $.ajax({
     url: '/addToCart',

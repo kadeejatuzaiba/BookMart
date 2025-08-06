@@ -90,15 +90,16 @@ router.get('/productDetails',userAuth,productController.productDetails)
 
 // Wishlist Management
 router.get('/wishlist',userAuth,wishlistController.loadWishlist);
-router.post('/addToWishlist',userAuth,wishlistController.addToWishlist);
+// router.post('/addToWishlist',userAuth,wishlistController.addToWishlist);
+router.post('/toggleWishlist', userAuth,wishlistController.toggleWishlist);
+
 router.get('/removeFromWishlist',userAuth,wishlistController.removeProduct)
 
 // Cart Management
 router.get('/cart', userAuth, cartController.loadCartPage);
 router.post('/addToCart', userAuth, cartController.addToCart);
 router.get('/removeFromCart',userAuth,cartController.removeProduct)
-router.post('/increase-quantity/:itemId', userAuth, cartController.increaseQuantity);
-router.post('/decrease-quantity/:itemId', userAuth, cartController.decreaseQuantity);
+router.post('/update-quantity',userAuth,cartController.updateQuantity)
 
 // checkout Management
 router.get('/checkout',userAuth,checkoutController.checkoutPage)

@@ -69,11 +69,7 @@
                 <input name="regularPrice" class="form-control" />
                 <div id="regularPrice-error" class="error-message"></div>
               </div>
-              <div class="col-md-4 mb-3">
-                <label>Sale Price</label>
-                <input name="salePrice" class="form-control" />
-                <div id="salePrice-error" class="error-message"></div>
-              </div>
+   
               <div class="col-md-4 mb-3">
                 <label>Quantity</label>
                 <input name="quantity" class="form-control" />
@@ -255,10 +251,9 @@ document.getElementById('productForm').addEventListener('submit', async function
       container.appendChild(input);
     });
   }
-
 function validateForm() {
   let isValid = true;
-  const requiredFields = ["productName", "author", "description", "regularPrice", "salePrice", "quantity", "category"];
+  const requiredFields = ["productName", "author", "description", "regularPrice", "quantity", "category"];
 
   requiredFields.forEach(field => {
     const value = document.getElementsByName(field)[0].value.trim();
@@ -271,23 +266,15 @@ function validateForm() {
     }
   });
 
+  // ✅ Validate regularPrice > 1
   const regularPriceValue = document.getElementsByName("regularPrice")[0].value.trim();
-  const salePriceValue = document.getElementsByName("salePrice")[0].value.trim();
-
   const price = parseFloat(regularPriceValue);
-  const sale = parseFloat(salePriceValue);
-
   if (regularPriceValue && (isNaN(price) || price <= 1)) {
     document.getElementById("regularPrice-error").innerText = "Regular price must be greater than ₹1";
     isValid = false;
   }
 
-  if (regularPriceValue && salePriceValue && !isNaN(price) && !isNaN(sale) && sale > price) {
-    document.getElementById("salePrice-error").innerText = "Sale price cannot exceed regular price";
-    isValid = false;
-  }
-
-  // Image validation: at least 1 image (either existing or newly uploaded)
+  // ✅ Image validation: at least 3 images required
   const uploadedImages = document.getElementById('uploadInput').files;
   const existingImages = document.querySelectorAll('.thumbnail-wrapper img');
   const totalImages = uploadedImages.length + existingImages.length;

@@ -4,6 +4,47 @@ const User = require('../../models/userSchema');
 
 
 
+// const loadCartPage = async (req, res) => {
+//   try {
+//     const userId = req.session.user;
+//     const cart = await Cart.findOne({ userId, 'items.status': 'active' }).populate({
+//       path: 'items.productId',
+//       model: Product,
+//       populate: { path: 'category', model: 'Category' }
+//     });
+
+//     let total = 0;
+//     let items = cart ? cart.items : [];
+
+//     // Check for stock mismatch
+//     let hasStockIssue = false;
+// if (items.length > 0) {
+//   for (const item of items) {
+//     const product = item.productId;
+//     if (!product || product.quantity < item.quantity) {
+//       continue; // Skip out-of-stock item
+//     }
+//     total += item.totalPrice;
+//     validItems.push(item);
+//   }
+// }
+
+//     res.render('cart', {
+//       user: req.session.user,
+//       items: validItems,
+//       total,
+//       hasStockIssue
+//     });
+//   } catch (err) {
+//     console.error('Error loading cart page:', err);
+//     res.redirect('/pageNotFound');
+//   }
+// };
+
+
+
+// Add to Cart
+
 const loadCartPage = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -16,22 +57,30 @@ const loadCartPage = async (req, res) => {
     let total = 0;
     let items = cart ? cart.items : [];
 
-    // Check for stock mismatch
+    let validItems = [];
     let hasStockIssue = false;
+
     if (items.length > 0) {
       for (const item of items) {
         const product = item.productId;
-        if (!product || product.quantity < item.quantity) {
+
+        if (!product) continue;
+
+        // If product stock is less than item quantity, mark warning
+        if (product.quantity < item.quantity) {
+          item.stockWarning = `Only ${product.quantity} left in stock`;
           hasStockIssue = true;
-          break;
+        } else {
+          total += item.totalPrice;
         }
-        total += item.totalPrice;
+
+        validItems.push(item); // ✅ Always add the item to show in cart
       }
     }
 
     res.render('cart', {
       user: req.session.user,
-      items,
+      items: validItems,
       total,
       hasStockIssue
     });
@@ -43,7 +92,6 @@ const loadCartPage = async (req, res) => {
 
 
 
-// Add to Cart
 const addToCart = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -57,6 +105,13 @@ if (qty < 1 || qty > 5) {
 
 
     const product = await Product.findById(productId).populate('category');
+
+        if (!userId) {
+      return res.status(200).json({
+        status: false,
+        message: 'You must be logged in to add items to cart.',
+      });
+    }
 
     // Validate product and category
     if (!product || product.isBlocked || !product.isListed || !product.category || product.category.isBlocked) {
@@ -138,7 +193,8 @@ const removeProduct = async (req, res) => {
   }
 };
 
-// Increase Quantity
+
+
 // const increaseQuantity = async (req, res) => {
 //   try {
 //     const userId = req.session.user;
@@ -148,9 +204,42 @@ const removeProduct = async (req, res) => {
 //     const item = cart.items.id(itemId);
 //     const product = item.productId;
 
-//     if (item.quantity < product.quantity && item.quantity < 5) {
+//     if (!product || product.quantity === 0) {
+//       // Optionally remove item if it's fully out of stock
+//       item.remove();
+//     } else if (item.quantity < product.quantity && item.quantity < 5) {
+//       // Normal increment
 //       item.quantity += 1;
-//       item.totalPrice = item.quantity * product.salePrice;
+//     } else {
+//       // Auto-adjust to max (lowest of stock or limit 5)
+//       const maxAllowed = Math.min(product.quantity, 5);
+//       item.quantity = maxAllowed;
+//     }
+
+//     item.totalPrice = item.quantity * product.salePrice;
+//     await cart.save();
+
+//     res.redirect('/cart');
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send('Server Error');
+//   }
+// };
+
+
+
+// // Decrease Quantity
+// const decreaseQuantity = async (req, res) => {
+//   try {
+//     const userId = req.session.user;
+//     const itemId = req.params.itemId;
+
+//     const cart = await Cart.findOne({ userId }).populate('items.productId');
+//     const item = cart.items.id(itemId);
+
+//     if (item.quantity > 1) {
+//       item.quantity -= 1;
+//       item.totalPrice = item.quantity * item.productId.salePrice;
 //       await cart.save();
 //     }
 
@@ -162,59 +251,45 @@ const removeProduct = async (req, res) => {
 // };
 
 
+// POST /update-quantity
 
-const increaseQuantity = async (req, res) => {
+
+const updateQuantity = async (req, res) => {
   try {
     const userId = req.session.user;
-    const itemId = req.params.itemId;
+    const { itemId, action } = req.body;
 
     const cart = await Cart.findOne({ userId }).populate('items.productId');
     const item = cart.items.id(itemId);
+
+    if (!item) return res.json({ success: false, message: 'Item not found' });
+
     const product = item.productId;
 
     if (!product || product.quantity === 0) {
-      // Optionally remove item if it's fully out of stock
+      // Remove item if completely out of stock
       item.remove();
-    } else if (item.quantity < product.quantity && item.quantity < 5) {
-      // Normal increment
-      item.quantity += 1;
-    } else {
-      // Auto-adjust to max (lowest of stock or limit 5)
-      const maxAllowed = Math.min(product.quantity, 5);
-      item.quantity = maxAllowed;
+    } else if (action === 'increase') {
+      if (item.quantity < product.quantity && item.quantity < 5) {
+        item.quantity += 1;
+      } else {
+        // Set to max allowed
+        const maxAllowed = Math.min(product.quantity, 5);
+        item.quantity = maxAllowed;
+      }
+    } else if (action === 'decrease') {
+      if (item.quantity > 1) {
+        item.quantity -= 1;
+      }
     }
 
     item.totalPrice = item.quantity * product.salePrice;
     await cart.save();
 
-    res.redirect('/cart');
+    res.json({ success: true, newQuantity: item.quantity, newTotalPrice: item.totalPrice });
   } catch (error) {
-    console.log(error);
-    res.status(500).send('Server Error');
-  }
-};
-
-
-
-// Decrease Quantity
-const decreaseQuantity = async (req, res) => {
-  try {
-    const userId = req.session.user;
-    const itemId = req.params.itemId;
-
-    const cart = await Cart.findOne({ userId }).populate('items.productId');
-    const item = cart.items.id(itemId);
-
-    if (item.quantity > 1) {
-      item.quantity -= 1;
-      item.totalPrice = item.quantity * item.productId.salePrice;
-      await cart.save();
-    }
-
-    res.redirect('/cart');
-  } catch (error) {
-    console.log(error);
-    res.status(500).send('Server Error');
+    console.error('Error in updateQuantity:', error);
+    res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
 
@@ -222,6 +297,8 @@ module.exports = {
   loadCartPage,
   addToCart,
   removeProduct,
-  increaseQuantity,
-  decreaseQuantity
+  // increaseQuantity,
+  // decreaseQuantity
+
+  updateQuantity
 };

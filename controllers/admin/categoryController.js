@@ -37,23 +37,6 @@ const categoryInfo=async(req,res)=>{
 }
 
 
-// const addCategory = async (req, res) => {
-//     const {name,description}=req.body;
-//     try {
-//       const existingCategory=await Category.findOne({name});
-//       if(existingCategory){
-//         return res.status(400).json({error:'Category already exist'})
-//       }
-//       const newCategory=new Category({
-//         name,
-//         description,
-//       })
-//       await newCategory.save()
-//       return res.json({message:'Category added successfully'})
-//     } catch (err) {
-//      return res.status(500).json({error:'Internal server error'})
-//     }
-//   }; 
 
 
 const addCategory = async (req, res) => {
@@ -160,18 +143,18 @@ const removeCategoryOffer = async (req, res) => {
     }
   }
 
-  const editCategory = async (req, res) => {
+const editCategory = async (req, res) => {
   try {
     const id = req.params.id;
     const { categoryName, description } = req.body;
 
     const existingCategory = await Category.findOne({ 
-      name: categoryName, 
-      _id: { $ne: id } // Allow same name if it's the same category
+      name: { $regex: `^${categoryName}$`, $options: 'i' }, // case-insensitive exact match
+      _id: { $ne: id } // exclude current category
     });
 
     if (existingCategory) {
-      return res.status(400).json({ error: 'Category exists, please choose another name' });
+      return res.status(400).json({ error: 'Category already exists, please choose another name' });
     }
 
     const updatedCategory = await Category.findByIdAndUpdate(id, {

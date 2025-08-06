@@ -25,31 +25,67 @@ const pageNotFound=async(req,res)=>{
     }
 }
 
+// const loadHomepage = async (req, res) => {
+//     try {
+//         const user = req.session.user;
+//         const categories = await Category.find({ isListed: true });
+//         let productData = await Product.find({
+//             isBlocked: false,
+//             category: { $in: categories.map(category => category._id) },
+//             // quantity: { $gt: 0 }
+//         });
+
+//         productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+//         productData = productData.slice(0, 4);
+
+//         if (user && user.isBlocked===false) {
+//             const userData = await User.findOne({ _id: user._id });
+//             res.render('home', { user: userData, products: productData }); // ✅ lowercase
+//         } else {
+//             res.render('home', { products: productData });
+//         }
+
+//     } catch (error) {
+//         console.log('Home page not found: ', error);
+//         res.status(500).send('Server error');
+//     }
+// }
+
 const loadHomepage = async (req, res) => {
     try {
-        const user = req.session.user;
         const categories = await Category.find({ isListed: true });
         let productData = await Product.find({
             isBlocked: false,
             category: { $in: categories.map(category => category._id) },
-            // quantity: { $gt: 0 }
         });
 
         productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         productData = productData.slice(0, 4);
 
-        if (user) {
-            const userData = await User.findOne({ _id: user._id });
-            res.render('home', { user: userData, products: productData }); // ✅ lowercase
-        } else {
-            res.render('home', { products: productData });
-        }
+        let userData = null;
+
+        if (req.session.user) {
+    const dbUser = await User.findById(req.session.user._id);
+
+    if (dbUser && !dbUser.isBlocked) {
+        userData = dbUser;
+    } else {
+        req.session.destroy(err => {
+            if (err) console.log('Session destroy error:', err);
+        });
+        userData = null;
+    }
+}
+
+        // Pass userData to EJS only if not blocked
+        res.render('home', { user: userData, products: productData });
 
     } catch (error) {
         console.log('Home page not found: ', error);
         res.status(500).send('Server error');
     }
-}
+};
+
 
 
 const loadSignup=async(req,res)=>{
@@ -133,9 +169,11 @@ const signup = async (req, res) => {
       if (!emailSent) {
         return res.json('email-error');
       }
-  
-      // Store OTP and data in session
-      req.session.userOtp = otp;
+  req.session.userOtp = {
+  code: otp,
+  expiresAt: Date.now() + 1 * 60 * 1000 
+};
+
       req.session.userData = { name, phone, email, password,referralCode: referralCode || null };
 
   
@@ -150,52 +188,110 @@ const signup = async (req, res) => {
   
 
 
+// const verifyOtp = async (req, res) => {
+//   try {
+//     const { otp } = req.body;
+//     console.log('Entered OTP:', otp);
+
+//     if (otp === req.session.userOtp) {
+//       const user = req.session.userData;
+//       const passwordHash = await securePassword(user.password);
+
+//       // Step 1: Generate unique referral code
+//       let uniqueCode;
+//       let isDuplicate = true;
+//       while (isDuplicate) {
+//         uniqueCode = generateReferralCode(user.name);
+//         const existing = await User.findOne({ referralCode: uniqueCode });
+//         if (!existing) isDuplicate = false;
+//       }
+
+//       // Step 2: Create new user with referral fields
+//       const saveUserData = new User({
+//         name: user.name,
+//         email: user.email,
+//         phone: user.phone,
+//         password: passwordHash,
+//         referralCode: uniqueCode,
+//         referredBy: user.referralCode || null
+//       });
+
+//       await saveUserData.save();
+
+//       // Step 3: If user was referred, credit ₹25 to both users
+//       if (user.referralCode) {
+//         const referrer = await User.findOne({ referralCode: user.referralCode });
+//         if (referrer) {
+//           await creditWallet(referrer._id, 25, "Referral bonus for inviting a friend");
+//           await creditWallet(saveUserData._id, 25, "Referral bonus for using referral code");
+//         }
+//       }
+
+//       // Step 4: Store session and redirect
+//       req.session.user = saveUserData; // store full user object
+//       res.json({ success: true, redirectUrl: '/' });
+
+//     } else {
+//       res.status(400).json({ success: false, message: 'Invalid OTP, please try again' });
+//     }
+//   } catch (error) {
+//     console.error('Error verifying OTP:', error);
+//     res.status(500).json({ success: false, message: 'An error occurred' });
+//   }
+// };
+
+
 const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
     console.log('Entered OTP:', otp);
 
-    if (otp === req.session.userOtp) {
-      const user = req.session.userData;
-      const passwordHash = await securePassword(user.password);
+    const otpData = req.session.userOtp;
 
-      // Step 1: Generate unique referral code
-      let uniqueCode;
-      let isDuplicate = true;
-      while (isDuplicate) {
-        uniqueCode = generateReferralCode(user.name);
-        const existing = await User.findOne({ referralCode: uniqueCode });
-        if (!existing) isDuplicate = false;
-      }
-
-      // Step 2: Create new user with referral fields
-      const saveUserData = new User({
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        password: passwordHash,
-        referralCode: uniqueCode,
-        referredBy: user.referralCode || null
-      });
-
-      await saveUserData.save();
-
-      // Step 3: If user was referred, credit ₹25 to both users
-      if (user.referralCode) {
-        const referrer = await User.findOne({ referralCode: user.referralCode });
-        if (referrer) {
-          await creditWallet(referrer._id, 25, "Referral bonus for inviting a friend");
-          await creditWallet(saveUserData._id, 25, "Referral bonus for using referral code");
-        }
-      }
-
-      // Step 4: Store session and redirect
-      req.session.user = saveUserData; // store full user object
-      res.json({ success: true, redirectUrl: '/' });
-
-    } else {
-      res.status(400).json({ success: false, message: 'Invalid OTP, please try again' });
+    // ✅ Step 1: Check if OTP exists and is not expired
+    if (!otpData || Date.now() > otpData.expiresAt) {
+      return res.status(400).json({ success: false, message: 'OTP expired. Please resend OTP.' });
     }
+
+    // ✅ Step 2: Match OTP
+    if (otp !== otpData.code) {
+      return res.status(400).json({ success: false, message: 'Invalid OTP, please try again' });
+    }
+
+    // ✅ Step 3: Proceed with registration
+    const user = req.session.userData;
+    const passwordHash = await securePassword(user.password);
+
+    let uniqueCode;
+    let isDuplicate = true;
+    while (isDuplicate) {
+      uniqueCode = generateReferralCode(user.name);
+      const existing = await User.findOne({ referralCode: uniqueCode });
+      if (!existing) isDuplicate = false;
+    }
+
+    const saveUserData = new User({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      password: passwordHash,
+      referralCode: uniqueCode,
+      referredBy: user.referralCode || null
+    });
+
+    await saveUserData.save();
+
+    if (user.referralCode) {
+      const referrer = await User.findOne({ referralCode: user.referralCode });
+      if (referrer) {
+        await creditWallet(referrer._id, 25, "Referral bonus for inviting a friend");
+        await creditWallet(saveUserData._id, 25, "Referral bonus for using referral code");
+      }
+    }
+
+    req.session.user = saveUserData;
+    res.json({ success: true, redirectUrl: '/' });
+
   } catch (error) {
     console.error('Error verifying OTP:', error);
     res.status(500).json({ success: false, message: 'An error occurred' });
@@ -211,7 +307,11 @@ const resendOtp=async(req,res)=>{
         }
 
         const otp =generateOtp()
-        req.session.userOtp=otp;
+       req.session.userOtp = {
+  code: otp,
+  expiresAt: Date.now() + 1* 60 * 1000
+};
+
 
         const emailSent=await sendVerificationEmail(email,otp);
         if(emailSent){
@@ -227,17 +327,25 @@ const resendOtp=async(req,res)=>{
 }
 
 
-const loadLogin=async(req,res)=>{
+const loadLogin = async (req, res) => {
     try {
-        if(!req.session.user){
-            return res.render('login')
-        }else{
-            res.redirect('/')
+        if (!req.session.user) {
+            return res.render('login');
         }
+
+        const user = await User.findById(req.session.user._id);
+
+        if (user && user.isBlocked) {
+            req.session.destroy(); // ❗ destroy session if blocked
+            return res.render('login');
+        }
+
+        res.redirect('/');
     } catch (error) {
-    res.redirect('/pageNotFound')
+        res.redirect('/pageNotFound');
     }
-}
+};
+
 
 
 
