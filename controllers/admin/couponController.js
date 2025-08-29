@@ -1,100 +1,89 @@
-const Coupon = require('../../models/couponSchema');
+const Coupon = require("../../models/couponSchema");
 
 const loadCoupon = async (req, res) => {
   try {
     const coupons = await Coupon.find({});
-    res.render('coupon', { 
-      coupons, 
-      editCoupon: null,     // ✅ ADD THIS
-      errorMsg: null        // ✅ if using error display
+    res.render("coupon", {
+      coupons,
+      editCoupon: null, 
+      errorMsg: null, 
     });
   } catch (err) {
     console.error(err);
-    res.redirect('/admin/pageerror');
+    res.redirect("/admin/pageerror");
   }
 };
 
-
 const createCoupon = async (req, res) => {
   try {
-    const {
-      couponName,
-      startDate,
-      endDate,
-      offerPrice,
-      minimumPrice
-    } = req.body;
+    const { couponName, startDate, endDate, offerPrice, minimumPrice } =
+      req.body;
 
-    // Check if coupon with same name already exists
-    const existingCoupon = await Coupon.findOne({ couponName: couponName.trim() });
+    const existingCoupon = await Coupon.findOne({
+      couponName: couponName.trim(),
+    });
     if (existingCoupon) {
-      return res.render('coupon', {
+      return res.render("coupon", {
         coupons: await Coupon.find({}),
-         editCoupon: null,  
-        errorMsg: 'Coupon name already exists'
+        editCoupon: null,
+        errorMsg: "Coupon name already exists",
       });
     }
 
     const newCoupon = new Coupon({
       couponName,
-      startDate: new Date(startDate + 'T00:00:00'),
-      endDate: new Date(endDate + 'T00:00:00'),
+      startDate: new Date(startDate + "T00:00:00"),
+      endDate: new Date(endDate + "T00:00:00"),
       offerPrice: Number(offerPrice),
-      minimumPrice: Number(minimumPrice)
+      minimumPrice: Number(minimumPrice),
     });
 
     await newCoupon.save();
-    res.redirect('/admin/coupons');
+    res.redirect("/admin/coupons");
   } catch (err) {
     console.error(err);
-    res.redirect('/admin/pageerror');
+    res.redirect("/admin/pageerror");
   }
 };
 
 const updateCoupon = async (req, res) => {
   try {
     const couponId = req.params.id;
-    const {
-      couponName,
-      startDate,
-      endDate,
-      offerPrice,
-      minimumPrice
-    } = req.body;
+    const { couponName, startDate, endDate, offerPrice, minimumPrice } =
+      req.body;
 
     // Check if another coupon with the same name already exists (excluding current)
     const duplicate = await Coupon.findOne({
       couponName: couponName.trim(),
-      _id: { $ne: couponId }
+      _id: { $ne: couponId },
     });
 
     if (duplicate) {
       const coupons = await Coupon.find({});
       const couponToEdit = await Coupon.findById(couponId);
 
-      return res.render('coupon', {
+      return res.render("coupon", {
         coupons,
         editCoupon: couponToEdit,
-        errorMsg: 'Coupon name already exists'
+        errorMsg: "Coupon name already exists",
       });
     }
 
     // Update the coupon
     await Coupon.findByIdAndUpdate(couponId, {
       couponName,
-      startDate: new Date(startDate + 'T00:00:00'),
-      endDate: new Date(endDate + 'T00:00:00'),
+      startDate: new Date(startDate + "T00:00:00"),
+      endDate: new Date(endDate + "T00:00:00"),
       offerPrice: Number(offerPrice),
-      minimumPrice: Number(minimumPrice)
+      minimumPrice: Number(minimumPrice),
     });
 
-    res.redirect('/admin/coupons');
+    res.redirect("/admin/coupons");
   } catch (err) {
     console.error(err);
-    res.redirect('/admin/pageerror');
+    res.redirect("/admin/pageerror");
   }
 };
-
 
 const editCouponForm = async (req, res) => {
   try {
@@ -103,17 +92,17 @@ const editCouponForm = async (req, res) => {
     const allCoupons = await Coupon.find({});
 
     if (!couponToEdit) {
-      return res.redirect('/admin/coupons');
+      return res.redirect("/admin/coupons");
     }
 
-    res.render('coupon', {
+    res.render("coupon", {
       coupons: allCoupons,
       editCoupon: couponToEdit,
-      errorMsg:null
+      errorMsg: null,
     });
   } catch (err) {
     console.error(err);
-    res.redirect('/admin/pageerror');
+    res.redirect("/admin/pageerror");
   }
 };
 
@@ -121,13 +110,12 @@ const deleteCoupon = async (req, res) => {
   try {
     const couponId = req.params.id;
     await Coupon.findByIdAndDelete(couponId);
-    res.status(200).json({ ok: true, msg: 'Coupon deleted' });
+    res.status(200).json({ ok: true, msg: "Coupon deleted" });
   } catch (err) {
-    console.error('Error deleting coupon:', err);
-    res.status(500).json({ ok: false, msg: 'Server error' });
+    console.error("Error deleting coupon:", err);
+    res.status(500).json({ ok: false, msg: "Server error" });
   }
 };
-
 
 module.exports = {
   loadCoupon,

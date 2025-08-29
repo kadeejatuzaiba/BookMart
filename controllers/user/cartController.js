@@ -4,47 +4,6 @@ const User = require('../../models/userSchema');
 
 
 
-// const loadCartPage = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     const cart = await Cart.findOne({ userId, 'items.status': 'active' }).populate({
-//       path: 'items.productId',
-//       model: Product,
-//       populate: { path: 'category', model: 'Category' }
-//     });
-
-//     let total = 0;
-//     let items = cart ? cart.items : [];
-
-//     // Check for stock mismatch
-//     let hasStockIssue = false;
-// if (items.length > 0) {
-//   for (const item of items) {
-//     const product = item.productId;
-//     if (!product || product.quantity < item.quantity) {
-//       continue; // Skip out-of-stock item
-//     }
-//     total += item.totalPrice;
-//     validItems.push(item);
-//   }
-// }
-
-//     res.render('cart', {
-//       user: req.session.user,
-//       items: validItems,
-//       total,
-//       hasStockIssue
-//     });
-//   } catch (err) {
-//     console.error('Error loading cart page:', err);
-//     res.redirect('/pageNotFound');
-//   }
-// };
-
-
-
-// Add to Cart
-
 const loadCartPage = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -193,67 +152,6 @@ const removeProduct = async (req, res) => {
   }
 };
 
-
-
-// const increaseQuantity = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     const itemId = req.params.itemId;
-
-//     const cart = await Cart.findOne({ userId }).populate('items.productId');
-//     const item = cart.items.id(itemId);
-//     const product = item.productId;
-
-//     if (!product || product.quantity === 0) {
-//       // Optionally remove item if it's fully out of stock
-//       item.remove();
-//     } else if (item.quantity < product.quantity && item.quantity < 5) {
-//       // Normal increment
-//       item.quantity += 1;
-//     } else {
-//       // Auto-adjust to max (lowest of stock or limit 5)
-//       const maxAllowed = Math.min(product.quantity, 5);
-//       item.quantity = maxAllowed;
-//     }
-
-//     item.totalPrice = item.quantity * product.salePrice;
-//     await cart.save();
-
-//     res.redirect('/cart');
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send('Server Error');
-//   }
-// };
-
-
-
-// // Decrease Quantity
-// const decreaseQuantity = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     const itemId = req.params.itemId;
-
-//     const cart = await Cart.findOne({ userId }).populate('items.productId');
-//     const item = cart.items.id(itemId);
-
-//     if (item.quantity > 1) {
-//       item.quantity -= 1;
-//       item.totalPrice = item.quantity * item.productId.salePrice;
-//       await cart.save();
-//     }
-
-//     res.redirect('/cart');
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send('Server Error');
-//   }
-// };
-
-
-// POST /update-quantity
-
-
 const updateQuantity = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -297,8 +195,5 @@ module.exports = {
   loadCartPage,
   addToCart,
   removeProduct,
-  // increaseQuantity,
-  // decreaseQuantity
-
   updateQuantity
 };

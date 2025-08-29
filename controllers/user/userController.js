@@ -187,60 +187,6 @@ const signup = async (req, res) => {
   };
   
 
-
-// const verifyOtp = async (req, res) => {
-//   try {
-//     const { otp } = req.body;
-//     console.log('Entered OTP:', otp);
-
-//     if (otp === req.session.userOtp) {
-//       const user = req.session.userData;
-//       const passwordHash = await securePassword(user.password);
-
-//       // Step 1: Generate unique referral code
-//       let uniqueCode;
-//       let isDuplicate = true;
-//       while (isDuplicate) {
-//         uniqueCode = generateReferralCode(user.name);
-//         const existing = await User.findOne({ referralCode: uniqueCode });
-//         if (!existing) isDuplicate = false;
-//       }
-
-//       // Step 2: Create new user with referral fields
-//       const saveUserData = new User({
-//         name: user.name,
-//         email: user.email,
-//         phone: user.phone,
-//         password: passwordHash,
-//         referralCode: uniqueCode,
-//         referredBy: user.referralCode || null
-//       });
-
-//       await saveUserData.save();
-
-//       // Step 3: If user was referred, credit ₹25 to both users
-//       if (user.referralCode) {
-//         const referrer = await User.findOne({ referralCode: user.referralCode });
-//         if (referrer) {
-//           await creditWallet(referrer._id, 25, "Referral bonus for inviting a friend");
-//           await creditWallet(saveUserData._id, 25, "Referral bonus for using referral code");
-//         }
-//       }
-
-//       // Step 4: Store session and redirect
-//       req.session.user = saveUserData; // store full user object
-//       res.json({ success: true, redirectUrl: '/' });
-
-//     } else {
-//       res.status(400).json({ success: false, message: 'Invalid OTP, please try again' });
-//     }
-//   } catch (error) {
-//     console.error('Error verifying OTP:', error);
-//     res.status(500).json({ success: false, message: 'An error occurred' });
-//   }
-// };
-
-
 const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;

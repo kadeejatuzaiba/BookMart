@@ -351,35 +351,6 @@ const retryWallet = async (req, res) => {
   }
 };
 
-/* ========== RAZORPAY RETRY ========== */
-// const retryRazorpay = async (req, res) => {
-//   try {
-//     const { orderId } = req.body;
-
-//     // const order = await Order.findById(orderId);
-//     const order = await Order.findById(req.body.mongoOrderId)
-//     if (!order) return res.status(404).json({ message: 'Order not found' });
-
-//     // Create new Razorpay order
-//     const rzOrder = await rzp.orders.create({
-//       amount: order.finalAmount * 100,
-//       currency: 'INR',
-//       receipt: `retry_${order._id}`
-//     });
-
-//     // Store new Razorpay order id in DB
-//     order.razorpayOrderId = rzOrder.id;
-//     order.paymentMethod = 'Razorpay';
-//     order.status = 'Pending';
-//     await order.save();
-
-//     return res.json({ id: rzOrder.id, amount: order.finalAmount * 100, orderId: order._id });
-//   } catch (err) {
-//     console.error('Retry Razorpay Error:', err);
-//     res.status(500).json({ message: 'Server error during Razorpay retry' });
-//   }
-// };
-
 
 
 const retryRazorpay = async (req, res) => {

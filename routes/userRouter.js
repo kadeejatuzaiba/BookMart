@@ -32,6 +32,7 @@ router.use(setUserCounts);
 
 router.get('/pageNotFound',userController.pageNotFound)
 
+
 // Sign up Management
 
 router.get('/signup',userController.loadSignup)
@@ -140,5 +141,7 @@ router.get('/wallet',userAuth,walletController.loadWalletPage)
 router.post('/wallet/createOrder',userAuth,walletController.createOrder)
 router.post("/wallet/verifyPayment",userAuth, walletController.verifyPayment);
 router.put("/wallet/withdrawMoney",userAuth,walletController.withdrawMoney);
+
+
 
 module.exports = router;

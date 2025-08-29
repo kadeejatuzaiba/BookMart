@@ -1,6 +1,3 @@
-
-
-
 const User = require('../../models/userSchema');
 const Cart = require('../../models/cartSchema');
 const Product = require('../../models/productSchema');
@@ -17,13 +14,11 @@ const rzp = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-
 const getCartTotal = (cartItems) => {
   return cartItems.reduce((total, item) => {
     return total + item.quantity * item.product.salePrice;
   }, 0);
 };
-
 
 const checkoutPage = async (req, res) => {
   try {
@@ -126,7 +121,6 @@ const placeOrder = async (req, res) => {
 
     const SHIPPING = 50;
 
-    // regular price * qty (what the book costs without any offer)
     const regularTotal = cart.items.reduce(
       (sum, i) => sum + i.quantity * i.productId.regularPrice, 0);
 
@@ -246,7 +240,6 @@ if (paymentMethod === 'Wallet') {
     // plain COD
     await order.save();
 
-    /* mark coupon as used & clear session */
 /* ---- coupon bookkeeping ---- */
 /* ───── coupon bookkeeping (COD) ───── */
 if (req.session.appliedCoupon) {
@@ -256,7 +249,7 @@ if (req.session.appliedCoupon) {
     const already = coupon.usedUsers.some(u => u.equals(uid));
 
     if (!already) {
-      coupon.usedUsers.push(uid);                    // always push as ObjectId
+      coupon.usedUsers.push(uid);                    
       await coupon.save();
     }
   }
@@ -281,34 +274,11 @@ if (req.session.appliedCoupon) {
 
 
 
-
 const orderSuccess = (req, res) => {
   const orderId = req.query.orderId;
   res.render('orderSuccess', { orderId });
 };
 
-
-// const paymentFailure = async (req, res) => {
-//   const { orderId } = req.query;
-//   try {
-//     if (!orderId) {
-//       return res.render('paymentFailure', { orderId: null, order: null });
-//     }
-
-//     const order = await Order.findById(orderId);
-
-//     if (!order) {
-//       // if no order found, send null safely
-//       return res.render('paymentFailure', { orderId, order: null });
-//     }
-
-//     res.render('paymentFailure', { orderId, order });
-
-//   } catch (err) {
-//     console.error("Payment failure cleanup error:", err);
-//     res.render('paymentFailure', { orderId, order: null });
-//   }
-// };
 
 const paymentFailure = async (req, res) => {
   const { orderId } = req.query;
