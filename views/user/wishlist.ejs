@@ -130,19 +130,90 @@
   }
 
   
-  function addToCart(productId){
+//   function addToCart(productId){
+//   $.ajax({
+//     url: '/addToCart',
+//     method: 'POST',
+//     data: { productId },
+//     success: (response) => {
+      
+//       if (response.status) {
+//         Swal.fire({
+//           title: "Added to Cart",
+//           text: response.message, // Always shows same
+//           icon: 'success',
+//           timer: 2000
+//         });
+//       } else {
+//         Swal.fire({
+//           title: "Failed",
+//           text: response.message,
+//           icon: 'info',
+//           timer: 2000
+//         });
+//       }
+//     },
+//     error: () => {
+//       Swal.fire({
+//         title: 'Error',
+//         text: 'Something went wrong. Please try again.',
+//         icon: 'error',
+//         timer: 2000
+//       });
+//     }
+//   });
+// }
+
+function addToCart(productId) {
   $.ajax({
     url: '/addToCart',
     method: 'POST',
-    data: { productId },
+    data: { productId, quantity: 1 },
     success: (response) => {
       if (response.status) {
+        // ✅ Update cart badge
+        const cartBadge = $("#cartCount");
+        cartBadge.text(response.cartCount);
+        if (response.cartCount > 0) {
+          cartBadge.removeClass("d-none");
+        } else {
+          cartBadge.addClass("d-none");
+        }
+
+        // ✅ Update wishlist badge
+        const wishlistBadge = $("#wishlistCount");
+        wishlistBadge.text(response.wishlistCount);
+        if (response.wishlistCount > 0) {
+          wishlistBadge.removeClass("d-none");
+        } else {
+          wishlistBadge.addClass("d-none");
+        }
+
+        // ✅ Remove product row from wishlist table
+        $(`button[onclick="addToCart('${productId}')"]`)
+          .closest("tr")
+          .remove();
+
+        // ✅ If no rows left → show empty message
+        if ($("tbody tr").length === 0) {
+          $("tbody").html(`
+            <tr>
+              <td colspan="6">
+                <div class="alert alert-info text-center mb-0">
+                  Your wishlist is empty. <a href="/shop">Continue Shopping</a>
+                </div>
+              </td>
+            </tr>
+          `);
+        }
+
         Swal.fire({
           title: "Added to Cart",
-          text: response.message, // Always shows same
+          text: response.message,
           icon: 'success',
           timer: 2000
         });
+
       } else {
         Swal.fire({
           title: "Failed",

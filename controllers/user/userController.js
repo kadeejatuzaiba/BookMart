@@ -25,31 +25,6 @@ const pageNotFound=async(req,res)=>{
     }
 }
 
-// const loadHomepage = async (req, res) => {
-//     try {
-//         const user = req.session.user;
-//         const categories = await Category.find({ isListed: true });
-//         let productData = await Product.find({
-//             isBlocked: false,
-//             category: { $in: categories.map(category => category._id) },
-//             // quantity: { $gt: 0 }
-//         });
-
-//         productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
-//         productData = productData.slice(0, 4);
-
-//         if (user && user.isBlocked===false) {
-//             const userData = await User.findOne({ _id: user._id });
-//             res.render('home', { user: userData, products: productData }); // ✅ lowercase
-//         } else {
-//             res.render('home', { products: productData });
-//         }
-
-//     } catch (error) {
-//         console.log('Home page not found: ', error);
-//         res.status(500).send('Server error');
-//     }
-// }
 
 const loadHomepage = async (req, res) => {
     try {
@@ -62,30 +37,22 @@ const loadHomepage = async (req, res) => {
         productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         productData = productData.slice(0, 4);
 
+        // Use req.user for Passport users, fallback to session
         let userData = null;
 
-        if (req.session.user) {
-    const dbUser = await User.findById(req.session.user._id);
+        if (req.user) {  // ✅ Google login or any Passport login
+            if (!req.user.isBlocked) userData = req.user;
+        } else if (req.session.user) { // Normal login
+            const dbUser = await User.findById(req.session.user._id);
+            if (dbUser && !dbUser.isBlocked) userData = dbUser;
+        }
 
-    if (dbUser && !dbUser.isBlocked) {
-        userData = dbUser;
-    } else {
-        req.session.destroy(err => {
-            if (err) console.log('Session destroy error:', err);
-        });
-        userData = null;
-    }
-}
-
-        // Pass userData to EJS only if not blocked
         res.render('home', { user: userData, products: productData });
-
     } catch (error) {
-        console.log('Home page not found: ', error);
+        console.log('Home page error: ', error);
         res.status(500).send('Server error');
     }
 };
-
 
 
 const loadSignup=async(req,res)=>{

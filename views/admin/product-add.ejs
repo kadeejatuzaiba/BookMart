@@ -176,11 +176,28 @@ document.getElementById('productForm').addEventListener('submit', async function
   const maxImages = 4;
 
   function handleImage(input) {
-    if (!input.files.length) return;
-    if (croppedBlobs.length >= maxImages) {
-      alert("Maximum 4 images allowed.");
-      return;
-    }
+    // if (!input.files.length) return;
+    // if (croppedBlobs.length >= maxImages) {
+    //   alert("Maximum 4 images allowed.");
+    //   return;
+    // }
+
+
+      if (!input.files.length) return;
+
+  // ✅ Stop if already 3 images
+  if (croppedBlobs.length >= 3) {
+    Swal.fire("Limit Reached", "You can only upload exactly 3 images", "warning");
+    input.value = "";
+    return;
+  }
+  
+  // ✅ Stop if trying to add more than 3
+  if (croppedBlobs.length + input.files.length > 3) {
+    Swal.fire("Limit Reached", "You can only upload exactly 3 images", "warning");
+    input.value = "";
+    return;
+  }
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -279,12 +296,21 @@ function validateForm() {
   const existingImages = document.querySelectorAll('.thumbnail-wrapper img');
   const totalImages = uploadedImages.length + existingImages.length;
 
-  if (totalImages < 3) {
-    document.getElementById("images-error").innerText = "At least 3 images are required";
-    isValid = false;
-  } else {
-    document.getElementById("images-error").innerText = "";
-  }
+  // if (totalImages < 3) {
+  //   document.getElementById("images-error").innerText = "At least 3 images are required";
+  //   isValid = false;
+  // } else {
+  //   document.getElementById("images-error").innerText = "";
+  // }
+
+
+  
+if (totalImages !== 3) {
+  document.getElementById("images-error").innerText = "Please upload exactly 3 images";
+  isValid = false;
+} else {
+  document.getElementById("images-error").innerText = "";
+}
 
   return isValid;
 }

@@ -53,7 +53,9 @@ const toggleWishlist = async (req, res) => {
       return res.status(200).json({
         status: true,
         action: 'removed',
-        message: 'Product removed from wishlist'
+        message: 'Product removed from wishlist',
+        wishlistCount:user.wishlist.length
+
       });
     } else {
       user.wishlist.push(productId);
@@ -61,7 +63,8 @@ const toggleWishlist = async (req, res) => {
       return res.status(200).json({
         status: true,
         action: 'added',
-        message: 'Product added to wishlist'
+        message: 'Product added to wishlist',
+        wishlistCount:user.wishlist.length
       });
     }
 

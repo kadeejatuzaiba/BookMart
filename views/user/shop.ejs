@@ -400,6 +400,15 @@ function toggleWishlist(productId, btn) {
     data: { productId },
     success: (response) => {
       if (response.status) {
+
+              const wishlistBadge=$("#wishlistCount")
+            wishlistBadge.text(response.wishlistCount);
+
+      if (response.wishlistCount > 0) {
+        wishlistBadge.removeClass("d-none"); // show badge
+      } else {
+        wishlistBadge.addClass("d-none");    // hide badge if 0
+      }
         // Toggle icon based on action
         if (response.action === 'added') {
           btn.innerText = '❤️';
@@ -439,13 +448,32 @@ function toggleWishlist(productId, btn) {
 }
 
 
-
 function addToCart(productId) {
   $.ajax({
     url: '/addToCart',
     method: 'POST',
-    data: { productId, quantity: 1 },  // ✅ Add quantity = 1
+    data: { productId, quantity: 1 },
     success: (response) => {
+      if (!response.status) {
+        Swal.fire({
+          title: "Oops!",
+          text: response.message,
+          icon: 'warning',
+          timer: 2000
+        });
+        return;
+      }
+
+      // ✅ Always update the same badge
+      const cartBadge = $("#cartCount");
+      cartBadge.text(response.cartCount);
+
+      if (response.cartCount > 0) {
+        cartBadge.removeClass("d-none"); // show
+      } else {
+        cartBadge.addClass("d-none");    // hide
+      }
+
       Swal.fire({
         title: "Added to Cart",
         text: response.message,

@@ -46,33 +46,29 @@
      const p = i.productId;
      if (!p) return; 
 %>
-              <tr>
+              <!-- <tr>
                 <td>
                   <img src="/uploads/product-images/<%= p.image[0] %>"
                        style="width:70px;height:70px;object-fit:cover;">
                 </td>
-                <td><%= p.productName %></td>
+<% if (p.isBlocked) { %>
+  <td>
+    <%= p.productName %> 
+    <span class="text-danger fw-bold">(Blocked Product)</span>
+  </td>
+<% } else { %>
+  <td><%= p.productName %></td>
+<% } %>
+
+
                 <td><%= p.category.name %></td>
-                
+                 
                 <td>
   ₹<%= p.salePrice %>
   <% if (p.salePrice < p.regularPrice) { %>
     <s class="text-muted ms-1">₹<%= p.regularPrice %></s>
   <% } %>
 </td>
-
-
-                <!-- <td>
-                  <div class="d-flex justify-content-center align-items-center">
-                    <form action="/decrease-quantity/<%= i._id %>" method="POST" style="display:inline;">
-                      <button type="submit" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">-</button>
-                    </form>
-                    <span class="mx-2"><%= i.quantity %></span>
-                    <form action="/increase-quantity/<%= i._id %>" method="POST" style="display:inline;">
-                      <button type="submit" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">+</button>
-                    </form>
-                  </div>
-                </td> -->
 
 
                 <td>
@@ -85,13 +81,51 @@
 
 
 
-                <td>₹<%= p.salePrice * i.quantity %></td>
+                <td id="item-total-<%= i._id %>">₹<%= p.salePrice * i.quantity %></td>
                 <td>
                   
                     <button class="btn btn-sm btn-outline-danger" style="height: 40px;margin-bottom: 10px;" onclick="confirmRemove('<%=p._id%>')">Remove</button>
              
                 </td>
-              </tr>
+              </tr> -->
+
+              <tr data-product-id="<%= p._id %>">
+  <td>
+    <img src="/uploads/product-images/<%= p.image[0] %>"
+         style="width:70px;height:70px;object-fit:cover;">
+  </td>
+
+  <td class="product-name">
+    <%= p.productName %>
+    <% if (p.isBlocked) { %>
+      <span class="text-danger fw-bold blocked-label">(Blocked Product)</span>
+    <% } %>
+  </td>
+
+  <td><%= p.category.name %></td>
+
+  <td>
+    ₹<%= p.salePrice %>
+    <% if (p.salePrice < p.regularPrice) { %>
+      <s class="text-muted ms-1">₹<%= p.regularPrice %></s>
+    <% } %>
+  </td>
+
+  <td>
+    <div class="d-flex justify-content-center align-items-center">
+      <button onclick="updateQuantity('<%= i._id %>', 'decrease')" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">-</button>
+      <span class="mx-2" id="qty-<%= i._id %>"><%= i.quantity %></span>
+      <button onclick="updateQuantity('<%= i._id %>', 'increase')" class="btn btn-sm btn-outline-secondary" style="height: 30px;margin-bottom: 10px;">+</button>
+    </div>
+  </td>
+
+  <td id="item-total-<%= i._id %>">₹<%= p.salePrice * i.quantity %></td>
+
+  <td>
+    <button class="btn btn-sm btn-outline-danger" style="height: 40px;margin-bottom: 10px;" onclick="confirmRemove('<%=p._id%>')">Remove</button>
+  </td>
+</tr>
+
             <% }) %>
           </tbody>
         </table>
@@ -102,8 +136,11 @@
       <div class="row justify-content-center mt-4">
         <div class="col-md-6">
           <div class="card p-4 text-center shadow-sm">
-            <h4>Cart Total: ₹<%= total %></h4>
-            <a href="/checkout" class="btn btn-warning mt-3">Proceed to Checkout</a>
+            <h4 id="cart-total">Cart Total: ₹<%= total %></h4>
+
+            <!-- <a href="/checkout" class="btn btn-warning mt-3">Proceed to Checkout</a> -->
+          <a href="#" id="checkoutBtn" class="btn btn-warning mt-3">Proceed to Checkout</a>
+
           </div>
         </div>
       </div>
@@ -135,6 +172,7 @@
 
 
 </script>
+
 <script>
 async function updateQuantity(itemId, action) {
   try {
@@ -145,16 +183,60 @@ async function updateQuantity(itemId, action) {
     });
 
     const data = await res.json();
+
     if (data.success) {
+      // ✅ update UI
       document.getElementById(`qty-${itemId}`).textContent = data.newQuantity;
-      location.reload(); // Optional: You can update price/cart total dynamically instead of reload
+      document.getElementById(`item-total-${itemId}`).textContent = `₹${data.newTotalPrice}`;
+      document.getElementById("cart-total").textContent = `Cart Total: ₹${data.cartTotal}`;
+
+      // ✅ check for warning from backend
+      if (data.warning) {
+        Swal.fire("Warning", data.warning, "warning");
+      }
     } else {
-      alert(data.message || 'Error updating quantity');
+      Swal.fire("Error", data.message || "Error updating quantity", "error");
     }
   } catch (err) {
-    console.error('Error:', err);
+    console.error("Error:", err);
+    Swal.fire("Error", "Something went wrong", "error");
   }
 }
+</script>
+
+<script>
+document.getElementById("checkoutBtn").addEventListener("click", async function (e) {
+  e.preventDefault();
+
+  try {
+    const res = await fetch("/cart/check-blocked");
+    const data = await res.json();
+
+    if (data.blockedProducts.length > 0) {
+      // Show alert
+      Swal.fire("Blocked Items", "Some products in your cart are blocked. Please remove them.", "error");
+
+      // Highlight blocked products in cart table
+      data.blockedProducts.forEach(id => {
+        const row = document.querySelector(`[data-product-id='${id}']`);
+        if (row) {
+          row.classList.add("table-danger"); // Bootstrap class → red background
+          const nameCell = row.querySelector(".product-name");
+          if (nameCell && !nameCell.querySelector(".blocked-label")) {
+            nameCell.insertAdjacentHTML("beforeend", 
+              " <span class='text-danger fw-bold blocked-label'>(Blocked Product)</span>");
+          }
+        }
+      });
+    } else {
+      window.location.href = "/checkout";
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    Swal.fire("Error", "Something went wrong while checking cart", "error");
+  }
+});
+
 </script>
 
 <%- include('../partials/user/footer') %>

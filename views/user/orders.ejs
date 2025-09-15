@@ -88,7 +88,7 @@
         <% } else if (order.orderedItems.length > 1) { %>
           <% if (order.status === 'Delivered') { %>
             <a href="#" class="text-warning" onclick="returnItem('<%= order._id %>', '<%= item._id %>')">Return Product</a>
-          <% } else if (['Pending', 'Confirmed', 'Processing', 'Shipped'].includes(order.status)) { %>
+          <% } else if ([ 'Confirmed', 'Processing', 'Shipped'].includes(order.status)) { %>
             <a href="#" class="text-danger" onclick="cancelItem('<%= order._id %>', '<%= item._id %>')">Cancel Product</a>
           <% } %>
         <% } %>
@@ -101,6 +101,7 @@
       </div>
     <% }) %>
 
+    
     <% if (totalPages > 1) { %>
       <nav aria-label="Orders pagination">
         <ul class="pagination justify-content-center">
@@ -109,11 +110,13 @@
               <a class="page-link" href="/orders?page=<%= currentPage - 1 %><%= search ? '&search='+encodeURIComponent(search) : '' %>">&laquo; Prev</a>
             </li>
           <% } %>
+
           <% for (let i = 1; i <= totalPages; i++) { %>
             <li class="page-item <%= i === currentPage ? 'active' : '' %>">
               <a class="page-link" href="/orders?page=<%= i %><%= search ? '&search='+encodeURIComponent(search) : '' %>"><%= i %></a>
             </li>
           <% } %>
+
           <% if (currentPage < totalPages) { %>
             <li class="page-item">
               <a class="page-link" href="/orders?page=<%= currentPage + 1 %><%= search ? '&search='+encodeURIComponent(search) : '' %>">Next &raquo;</a>
@@ -122,9 +125,14 @@
         </ul>
       </nav>
     <% } %>
+
   <% } else { %>
     <div class="alert alert-info">No orders found.</div>
   <% } %>
+</div>
+
+
+  
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -13,37 +13,43 @@
             method="POST" 
             onsubmit="return validateForm()">
 
-            <div class="mb-3">
-              <label class="form-label">Coupon Name</label>
-              <input type="text" id="couponName" name="couponName" class="form-control" placeholder="Type here"
-                value="<%= editCoupon ? editCoupon.couponName : '' %>">
-            </div>
+<div class="mb-3">
+  <label class="form-label">Coupon Name</label>
+  <input type="text" id="couponName" name="couponName" class="form-control" placeholder="Type here"
+    value="<%= editCoupon ? editCoupon.couponName : '' %>">
+  <div class="text-danger small" id="couponNameError"></div>
+</div>
 
-            <div class="mb-3">
-              <label class="form-label">Start Date</label>
-              <input type="date" id="startDate" name="startDate" class="form-control"
-                value="<%= editCoupon ? editCoupon.startDate.toISOString().split('T')[0] : '' %>" >
-            </div>
+<div class="mb-3">
+  <label class="form-label">Start Date</label>
+  <input type="date" id="startDate" name="startDate" class="form-control"
+    value="<%= editCoupon ? editCoupon.startDate.toISOString().split('T')[0] : '' %>">
+  <div class="text-danger small" id="startDateError"></div>
+</div>
 
-            <div class="mb-3">
-              <label class="form-label">End Date</label>
-              <input type="date" id="endDate" name="endDate" class="form-control"
-                value="<%= editCoupon ? editCoupon.endDate.toISOString().split('T')[0] : '' %>" >
-            </div>
+<div class="mb-3">
+  <label class="form-label">End Date</label>
+  <input type="date" id="endDate" name="endDate" class="form-control"
+    value="<%= editCoupon ? editCoupon.endDate.toISOString().split('T')[0] : '' %>">
+  <div class="text-danger small" id="endDateError"></div>
+</div>
 
-            <div class="mb-3">
-              <label class="form-label">Offer Price</label>
-              <input type="number" id="offerPrice" name="offerPrice" class="form-control"
-                value="<%= editCoupon ? editCoupon.offerPrice : '' %>" min="1">
-            </div>
+<div class="mb-3">
+  <label class="form-label">Offer Price</label>
+  <input type="number" id="offerPrice" name="offerPrice" class="form-control"
+    value="<%= editCoupon ? editCoupon.offerPrice : '' %>" min="1">
+  <div class="text-danger small" id="offerPriceError"></div>
+</div>
 
-            <div class="mb-3">
-              <label class="form-label">Minimum Price</label>
-              <input type="number" id="minimumPrice" name="minimumPrice" class="form-control"
-                value="<%= editCoupon ? editCoupon.minimumPrice : '' %>" min="1">
-            </div>
+<div class="mb-3">
+  <label class="form-label">Minimum Price</label>
+  <input type="number" id="minimumPrice" name="minimumPrice" class="form-control"
+    value="<%= editCoupon ? editCoupon.minimumPrice : '' %>" min="1">
+  <div class="text-danger small" id="minimumPriceError"></div>
+</div>
 
-            <div id="errorMsg" class="text-danger mb-2" style="display:none;"></div>
+
+            <!-- <div id="errorMsg" class="text-danger mb-2" style="display:none;"></div> -->
 
             <% if (errorMsg && errorMsg.trim() !== '') { %>
   <div class="alert alert-danger text-center"><%= errorMsg %></div>
@@ -109,42 +115,51 @@
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-  function validateForm () {
+function validateForm() {
+  let valid = true;
+
+
+  document.querySelectorAll('.text-danger').forEach(el => el.textContent = '');
+
   const name  = document.getElementById('couponName').value.trim();
   const start = document.getElementById('startDate').value;
   const end   = document.getElementById('endDate').value;
   const offer = +document.getElementById('offerPrice').value;
   const min   = +document.getElementById('minimumPrice').value;
-  const msg   = document.getElementById('errorMsg');
 
-  if (!name || !start || !end || !offer || !min) {
-    msg.textContent = 'All fields are required';
-    msg.style.display = 'block';
-    return false;
+  if (!name) {
+    document.getElementById('couponNameError').textContent = 'Coupon name is required';
+    valid = false;
   }
 
-  if (offer <= 0 || min <= 0) {
-    msg.textContent = 'Prices must be greater than 0';
-    msg.style.display = 'block';
-    return false;
+  if (!start) {
+    document.getElementById('startDateError').textContent = 'Start date is required';
+    valid = false;
   }
 
-  if (new Date(end) < new Date(start)) {
-    msg.textContent = 'End date must be after start date';
-    msg.style.display = 'block';
-    return false;
+  if (!end) {
+    document.getElementById('endDateError').textContent = 'End date is required';
+    valid = false;
+  } else if (new Date(end) < new Date(start)) {
+    document.getElementById('endDateError').textContent = 'End date must be after start date';
+    valid = false;
   }
 
-  if (offer >= min) {
-    msg.textContent = 'Minimum price must be greater than offer price';
-    msg.style.display = 'block';
-    return false;
+  if (!offer || offer <= 0) {
+    document.getElementById('offerPriceError').textContent = 'Offer price must be greater than 0';
+    valid = false;
   }
 
-  msg.style.display = 'none';
-  return true;
+  if (!min || min <= 0) {
+    document.getElementById('minimumPriceError').textContent = 'Minimum price must be greater than 0';
+    valid = false;
+  } else if (offer >= min) {
+    document.getElementById('minimumPriceError').textContent = 'Minimum price must be greater than offer price';
+    valid = false;
+  }
+
+  return valid;
 }
-
 
   
 </script>

@@ -71,9 +71,6 @@ router.post('/changeEmail',userAuth,profileController.changeEmailValid)
 router.post('/verifyEmailOtp',userAuth,profileController.verifyEmailOtp)
 router.get('/updateEmail',userAuth,profileController.getNewEmailPage);
 router.post('/updateEmail',userAuth,profileController.updateEmail)
-router.get('/changePassword',userAuth,profileController.changePassword)
-router.post('/changePassword',userAuth,profileController.changePasswordValid)
-router.post('/verifyChangePasswordOtp',userAuth,profileController.verifyChangePassOtp)
 router.get('/reset-password', userAuth, profileController.getResetPasswordPage);
 router.get('/change-name', userAuth, profileController.getChangeNamePage);
 router.post('/change-name', userAuth, profileController.updateName);
@@ -91,9 +88,7 @@ router.get('/productDetails',userAuth,productController.productDetails)
 
 // Wishlist Management
 router.get('/wishlist',userAuth,wishlistController.loadWishlist);
-// router.post('/addToWishlist',userAuth,wishlistController.addToWishlist);
 router.post('/toggleWishlist', userAuth,wishlistController.toggleWishlist);
-
 router.get('/removeFromWishlist',userAuth,wishlistController.removeProduct)
 
 // Cart Management
@@ -101,13 +96,14 @@ router.get('/cart', userAuth, cartController.loadCartPage);
 router.post('/addToCart', userAuth, cartController.addToCart);
 router.get('/removeFromCart',userAuth,cartController.removeProduct)
 router.post('/update-quantity',userAuth,cartController.updateQuantity)
+router.get("/cart/check-blocked", cartController.checkBlockedCart);
+
 
 // checkout Management
 router.get('/checkout',userAuth,checkoutController.checkoutPage)
 router.post('/place-order',userAuth,checkoutController.placeOrder)
 router.get('/order-success',userAuth,checkoutController.orderSuccess)
 router.get('/payment-failure',userAuth,checkoutController. paymentFailure);
-// router.get('/retry-payment/:orderId', userAuth,checkoutController.retryPayment);
 router.post('/verify-payment',userAuth,checkoutController.verifyPayment);
 router.post('/apply-coupon', userAuth, checkoutController.applyCoupon);
 router.delete('/remove-coupon', userAuth, checkoutController.removeCoupon);
@@ -123,7 +119,6 @@ router.get('/download-invoice/:id',userAuth,orderController.getInvoice)
 
 
 router.patch('/cancel-product/:orderId/:itemId', userAuth, orderController.cancelProduct);
-// For returning a single product in order
 router.patch('/return-product/:orderId/:itemId', userAuth, upload.array('images', 3), orderController.returnProduct);
 router.get('/retry-payment/:orderId',userAuth,orderController.getretryPayment);
 

@@ -131,14 +131,6 @@ const verifyReturnRequest = async (req, res) => {
     order.status = "returned";
     await order.save();
 
-    for (const item of order.orderedItems) {
-      if (item.status === "returned") {
-        await Product.findByIdAndUpdate(item.product, {
-          $inc: { quantity: item.quantity },
-        });
-      }
-    }
-
     return res.json({ ok: true });
   } catch (err) {
     console.error("Verify-return error:", err);

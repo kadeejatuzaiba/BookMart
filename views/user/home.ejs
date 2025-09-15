@@ -100,15 +100,6 @@
                 
 					<div class="product-item border rounded p-3 text-center shadow-sm position-relative">
 
-  <!-- Heart button in top-right -->
-<!-- <button type="button" 
-        class="btn wishlist-btn position-absolute top-0 end-0 m-2 shadow-sm add-to-wishlist" 
-        data-id="<%= products[i]._id %>" 
-        title="Add to Wishlist">
-  ❤️
-</button> -->
-
-
 
 <button type="button" 	z
         onclick="toggleWishlist('<%= products[i]._id %>', this)" 
@@ -189,6 +180,8 @@
     method: 'POST',
     data: { productId },
     success: (response) => {
+      console.log("Wishlist Response:", response);
+
       if (!response.status) {
         if (response.message.includes("logged in")) {
           Swal.fire({
@@ -212,6 +205,15 @@
           });
         }
         return;
+      }
+
+      const wishlistBadge=$("#wishlistCount")
+            wishlistBadge.text(response.wishlistCount);
+
+      if (response.wishlistCount > 0) {
+        wishlistBadge.removeClass("d-none"); // show badge
+      } else {
+        wishlistBadge.addClass("d-none");    // hide badge if 0
       }
 
       // Toggle icon based on action
@@ -244,13 +246,11 @@
   });
 }
 
-
 function addToCart(productId) {
   $.ajax({
     url: '/addToCart',
     method: 'POST',
     data: { productId, quantity: 1 },
-
     success: (response) => {
       if (!response.status) {
         if (response.message.includes("logged in")) {
@@ -277,6 +277,16 @@ function addToCart(productId) {
         return;
       }
 
+      // ✅ Update cart count using #cartCount
+      const cartBadge = $("#cartCount");
+      cartBadge.text(response.cartCount);
+
+      if (response.cartCount > 0) {
+        cartBadge.removeClass("d-none"); // show badge
+      } else {
+        cartBadge.addClass("d-none");    // hide badge if 0
+      }
+
       Swal.fire({
         title: "Added to Cart",
         text: response.message,
@@ -284,7 +294,6 @@ function addToCart(productId) {
         timer: 2000
       });
     },
-
     error: (xhr) => {
       const res = xhr.responseJSON;
       Swal.fire({

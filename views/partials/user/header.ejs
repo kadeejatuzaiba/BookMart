@@ -75,9 +75,6 @@
 
 <body data-bs-spy="scroll" data-bs-target="#header" tabindex="0">
 
-
-
-
 <div id="header-wrap" class="header1">
 
     <div class="top-content">
@@ -92,8 +89,6 @@
                 </div>
                 <div class="col-md-6" >
                     <div class="right-element">
-
-
 
 
                         <%if(locals.user){%>
@@ -115,43 +110,37 @@
 
                         <%}%>
 
-                        <!-- <a href="userProfile" class="user-account for-buy"><i class="icon icon-user" style="margin-left: 20px;"></i></a>
-                        <a href="#" class="cart for-buy"><i class="icon icon-clipboard"></i><span>Cart:(0 $)</span></a> -->
-
 <a href="/userProfile" class="user-account for-buy">
   <i class="icon icon-user" style="margin-left: 20px;"></i>
 </a>
-<!-- 
-<a href="/wishlist" class="wishlist for-buy position-relative">
-  <i class="bi bi-heart-fill"></i>
-  <span>Wishlist</span>
 
-
-</a>
-
-<a href="/cart" class="cart for-buy position-relative">
-  <i class="icon icon-clipboard"></i>
-  <span>Cart</span>
-</a> -->
 <a href="/wishlist" class="wishlist for-buy position-relative">
   <i class="bi bi-heart-fill"></i>
   <span>Wishlist</span>
   <% if (wishlistCount > 0) { %>
-    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+    <span id="wishlistCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
       <%= wishlistCount %>
     </span>
-  <% } %>
+  <% }else{ %>
+    <span id="wishlistCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">0</span>
+    <%}%>
 </a>
+
 
 <a href="/cart" class="cart for-buy position-relative">
   <i class="icon icon-clipboard"></i>
   <span>Cart</span>
   <% if (cartCount > 0) { %>
-    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+    <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
       <%= cartCount %>
     </span>
+  <% } else { %>
+    <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none">0</span>
   <% } %>
 </a>
+
+
+
 
                     </div><!--top-right-->
                 </div>

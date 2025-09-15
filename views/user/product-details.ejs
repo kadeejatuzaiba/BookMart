@@ -73,21 +73,6 @@
     background-color:#dca910;
   }
  
-   .wishlist-btn {
-    width: 80px;
-    height: 60px;
-    background-color: transparent;
-    border: 1px solid rgb(0, 0, 0);
-    color: rgb(255, 0, 0);
-    transition: background-color 0.3s, color 0.3s;
-  }
-
-  .wishlist-btn:hover {
-    border: 1px solid red;
-    color: red;
-  }
-
-
     .product-meta {
     list-style: none;
     padding-left: 0;
@@ -271,17 +256,26 @@
 <button class="btn w-100 custom-add-cart btn-primary" onclick="addToCart('<%= product._id %>')">Add to Cart</button>
 
     <!-- Wishlist -->
-    <button class="btn btn-sm d-flex align-items-center justify-content-center wishlist-btn"
+    <!-- <button class="btn btn-sm d-flex align-items-center justify-content-center wishlist-btn"
             title="Add to wishlist" onclick="addToWishlist('<%= product._id %>')">
       <i class="bi bi-heart-fill"></i>
-    </button>
+    </button> -->
+
+<button type="button"
+        onclick="toggleWishlist('<%= product._id %>', this)" 
+        class="btn wishlist-btn shadow-sm" 
+        data-id="<%= product._id %>" 
+        title="Add to Wishlist">
+  <% if (user && user.wishlist.includes(product._id.toString())) { %>
+    ❤️
+  <% } else { %>
+    🤍
+  <% } %>
+</button>
+
   </div>
 
-  <!-- Buy Now Button -->
-  <!-- <div class="d-flex flex-column flex-sm-row gap-2">
-    <button class="btn btn-warning w-100 btn-buynow" onclick="buyNow('<%= product._id %>')">Buy Now</button>
 
-  </div> -->
 
 <% } else { %>
   <!-- Out of Stock: Show unified layout -->
@@ -325,50 +319,56 @@
       <% if (relatedProducts && relatedProducts.length > 0) { %>
         <% relatedProducts.forEach(product => { %>
           <div class="col-md-4 mb-4">
-            <div class="product-item border rounded p-3 text-center shadow-sm position-relative">
+      <div class="product-item border rounded p-3 text-center shadow-sm position-relative">
 
-              <!-- Heart Button -->
-              <button type="button" onclick="addToWishlist('<%=product._id%>')"
-        class="btn  position-absolute top-0 end-0 m-2 shadow-sm add-to-wishlist" 
-        data-id="<%= product._id %>" 
-        title="Add to Wishlist">
-  ❤️
-</button>
+  <!-- Wishlist Button in corner -->
+  <button type="button"
+          onclick="toggleWishlist('<%= product._id %>', this)" 
+          class="btn wishlist-btn shadow-sm position-absolute top-0 end-0 m-2" 
+          data-id="<%= product._id %>" 
+          title="Add to Wishlist"
+          style="z-index: 10;">
+    <% if (user && user.wishlist.includes(product._id.toString())) { %>
+      ❤️
+    <% } else { %>
+      🤍
+    <% } %>
+  </button>
 
-              <figure class="product-style">
-                <a href="/productDetails?id=<%= product._id %>">
-                  <% if (product.image && product.image.length > 0) { %>
-                    <img src="/uploads/product-images/<%= product.image[0] %>" 
-                         alt="<%= product.productName %>" 
-                         class="img-fluid mb-3" 
-                         style="height: 250px; object-fit: cover;">
-                  <% } else { %>
-                    <img src="/images/default-book.jpg" 
-                         alt="No image available" 
-                         class="img-fluid mb-3" 
-                         style="height: 250px; object-fit: cover;">
-                  <% } %>
-                </a>
-              </figure>
+  <figure class="product-style mt-4"> <!-- mt-4 so image doesn’t overlap wishlist -->
+    <a href="/productDetails?id=<%= product._id %>">
+      <% if (product.image && product.image.length > 0) { %>
+        <img src="/uploads/product-images/<%= product.image[0] %>" 
+             alt="<%= product.productName %>" 
+             class="img-fluid mb-3" 
+             style="height: 250px; object-fit: cover;">
+      <% } else { %>
+        <img src="/images/default-book.jpg" 
+             alt="No image available" 
+             class="img-fluid mb-3" 
+             style="height: 250px; object-fit: cover;">
+      <% } %>
+    </a>
+  </figure>
 
-              <figcaption class="mt-3">
-                <h3><%= product.productName %></h3>
-                <p class="text-muted mb-1"><%= product.author %></p>
+  <figcaption class="mt-3">
+    <h3><%= product.productName %></h3>
+    <p class="text-muted mb-1"><%= product.author %></p>
 
-                <% if (product.category && product.category.name) { %>
-                  <h6 class="text-muted small mb-2">Category: <%= product.category.name %></h6>
-                <% } %>
+    <% if (product.category && product.category.name) { %>
+      <h6 class="text-muted small mb-2">Category: <%= product.category.name %></h6>
+    <% } %>
 
-          
-                <div class="d-flex justify-content-center gap-2">
-                   <button type="button" onclick="addToCart('<%=product._id%>')"
-                                      class="btn btn-small btn-accent btn-pill add-to-cart" 
-                                      data-id="<%= product._id %>">
-                                <i class="fa fa-shopping-cart me-1"></i> Add to Cart
-                              </button>
-                </div>
-              </figcaption>
-            </div>
+    <div class="d-flex justify-content-center gap-2">
+      <button type="button" onclick="addToCart('<%= product._id %>')"
+              class="btn btn-small btn-accent btn-pill add-to-cart" 
+              data-id="<%= product._id %>">
+        <i class="fa fa-shopping-cart me-1"></i> Add to Cart
+      </button>
+    </div>
+  </figcaption>
+</div>
+
           </div>
         <% }); %>
       <% } else { %>
@@ -496,34 +496,60 @@
 </script>
 
 <script>
-//   function addToCart(productId) {
-//   const quantity = document.getElementById('quantity').value;
 
-//   $.post('/addToCart', { productId, quantity }, (res) => {
-//     Swal.fire({
-//       title: res.status ? "Added to Cart" : "Failed",
-//       text: res.message,
-//       icon: res.status ? "success" : "info",
-//       timer: 2000
-//     });
-//   }).fail(() => {
-//     Swal.fire({
-//       title: "Error",
-//       text: "Try again later",
-//       icon: "error",
-//       timer: 2000
-//     });
+// function addToCart(productId) {
+//   $.ajax({
+//     url: '/addToCart',
+//     method: 'POST',
+//     data: { productId, quantity: 1 },  // ✅ Add quantity = 1
+//     success: (response) => {
+//       Swal.fire({
+//         title: "Added to Cart",
+//         text: response.message,
+//         icon: 'success',
+//         timer: 2000
+//       });
+//     },
+//     error: (xhr) => {
+//       const res = xhr.responseJSON;
+//       Swal.fire({
+//         title: "Failed",
+//         text: res?.message || "Something went wrong. Please try again.",
+//         icon: 'info',
+//         timer: 2000
+//       });
+//     }
 //   });
 // }
 
-
-
 function addToCart(productId) {
+  const qty = $("#quantity").val() || 1; // ✅ get dropdown value
+
   $.ajax({
     url: '/addToCart',
     method: 'POST',
-    data: { productId, quantity: 1 },  // ✅ Add quantity = 1
+    data: { productId, quantity: qty },
     success: (response) => {
+      if (!response.status) {
+        Swal.fire({
+          title: "Oops!",
+          text: response.message,
+          icon: 'warning',
+          timer: 2000
+        });
+        return;
+      }
+
+      // ✅ update cart badge
+      const cartBadge = $("#cartCount");
+      cartBadge.text(response.cartCount);
+
+      if (response.cartCount > 0) {
+        cartBadge.removeClass("d-none");
+      } else {
+        cartBadge.addClass("d-none");
+      }
+
       Swal.fire({
         title: "Added to Cart",
         text: response.message,
@@ -543,18 +569,74 @@ function addToCart(productId) {
   });
 }
 
- 
+	function toggleWishlist(productId, btn) {
+  $.ajax({
+    url: '/toggleWishlist',
+    method: 'POST',
+    data: { productId },
+    success: (response) => {
+      if (!response.status) {
+        if (response.message.includes("logged in")) {
+          Swal.fire({
+            title: "Login Required",
+            text: response.message,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Login',
+            cancelButtonText: 'Cancel'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/login'; // or your login route
+            }
+          });
+        } else {
+          Swal.fire({
+            title: "Oops!",
+            text: response.message,
+            icon: 'warning',
+            timer: 1500
+          });
+        }
+        return;
+      }
 
-  function addToWishlist(productId) {
-    $.post('/addToWishlist', { productId }, (res) => {
+            const wishlistBadge=$("#wishlistCount")
+            wishlistBadge.text(response.wishlistCount);
+
+      if (response.wishlistCount > 0) {
+        wishlistBadge.removeClass("d-none"); // show badge
+      } else {
+        wishlistBadge.addClass("d-none");    // hide badge if 0
+      }
+      // Toggle icon based on action
+      if (response.action === 'added') {
+        btn.innerText = '❤️';
+        Swal.fire({
+          title: "Added to wishlist",
+          text: response.message,
+          icon: 'success',
+          timer: 1500
+        });
+      } else {
+        btn.innerText = '🤍';
+        Swal.fire({
+          title: "Removed from wishlist",
+          text: response.message,
+          icon: 'info',
+          timer: 1500
+        });
+      }
+    },
+    error: () => {
       Swal.fire({
-        title: res.status ? "Added to Wishlist" : "Info",
-        text: res.message,
-        icon: res.status ? "success" : "info",
-        timer: 2000
+        title: 'Error',
+        text: 'Something went wrong',
+        icon: 'error',
+        timer: 1500
       });
-    });
-  }
+    }
+  });
+}
 </script>
 
 

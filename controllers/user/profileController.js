@@ -145,24 +145,70 @@ const resendOtp = async (req, res) => {
   }
 };
 
-const postNewPassword=async(req,res)=>{
+// const postNewPassword=async(req,res)=>{
+//     try {
+//         const {newPass1,newPass2}=req.body;
+        
+//         const email=req.session.email;
+//         if(newPass1===newPass2){
+//             const passwordHash=await securePassword(newPass1)
+//             await User.updateOne(
+//                 {email:email},
+//                 {$set:{password:passwordHash}}
+//             )
+//             res.redirect('/login')
+//         }else{
+//             res.render('reset-password',{message:'passwords dod not match'})
+//         }
+//     } catch (error) {
+//         res.redirect('/pageNotFound')
+//     }
+// }
+
+const postNewPassword = async (req, res) => {
     try {
-        const {newPass1,newPass2}=req.body;
-        const email=req.session.email;
-        if(newPass1===newPass2){
-            const passwordHash=await securePassword(newPass1)
+        const { newPass1, newPass2 } = req.body;
+
+        // Case 1: User is logged in (change password from profile)
+        if (req.session.user) {
+           const userId = req.session.userId || req.session.user._id;
+
+
+            if (newPass1 !== newPass2) {
+                return res.render('reset-password', { message: 'Passwords do not match' });
+            }
+
+
+            console.log("Session userId:", req.session.userId);
+
+
+            const passwordHash = await securePassword(newPass1);
             await User.updateOne(
-                {email:email},
-                {$set:{password:passwordHash}}
-            )
-            res.redirect('/login')
-        }else{
-            res.render('reset-password',{message:'passwords dod not match'})
+                { _id: userId },
+                { $set: { password: passwordHash } }
+            );
+
+            return res.redirect('/userProfile'); // stop execution here
+        }
+
+        // Case 2: Forgot password (email in session)
+        const email = req.session.email;
+        if (newPass1 === newPass2) {
+            const passwordHash = await securePassword(newPass1);
+            await User.updateOne(
+                { email: email },
+                { $set: { password: passwordHash } }
+            );
+
+            return res.redirect('/login');
+        } else {
+            return res.render('reset-password', { message: 'Passwords do not match' });
         }
     } catch (error) {
-        res.redirect('/pageNotFound')
+        res.redirect('/pageNotFound');
     }
-}
+};
+
 
 const userProfile=async(req,res)=>{
     try {
@@ -345,72 +391,70 @@ const updateEmail = async (req, res) => {
   }
 };
 
-const changePassword=async(req,res)=>{
-    try {
-        res.render('change-password')
-    } catch (error) {
-        res.redirect('/pageNotFound')
-    }
-}
+// const changePassword=async(req,res)=>{
+//     try {
+//         res.render('reset-password')
+//     } catch (error) {
+//         res.redirect('/pageNotFound')
+//     }
+// }
 
 
-const changePasswordValid = async (req, res) => {
-  try {
+// const changePasswordValid = async (req, res) => {
+//   try {
 
-    const email         = req.session.user.email;   
-    const userExists    = await User.findOne({ email });
+//     const email         = req.session.user.email;   
+//     const userExists    = await User.findOne({ email });
 
-    if (!userExists) {
-      return res.render('change-password', {
-        message: 'User not found. Please login again.'
-      });
-    }
+//     if (!userExists) {
+//       return res.render('change-password', {
+//         message: 'User not found. Please login again.'
+//       });
+//     }
 
-    const otp        = generateOtp();
-    const emailSent  = await sendVerificationEmail(email, otp);
+//     const otp        = generateOtp();
+//     const emailSent  = await sendVerificationEmail(email, otp);
 
-    if (!emailSent) {
-      return res.render('change-password', {
-        message: 'Unable to send OTP. Please try again.'
-      });
-    }
-    req.session.userOtp = otp;
-    req.session.email   = email;     
-    res.render('change-password-otp');
-    console.log('OTP for password change:', otp);
+//     if (!emailSent) {
+//       return res.render('change-password', {
+//         message: 'Unable to send OTP. Please try again.'
+//       });
+//     }
+//     req.session.userOtp = otp;
+//     req.session.email   = email;     
+//     res.render('change-password-otp');
+//     console.log('OTP for password change:', otp);
 
-  } catch (err) {
-    console.error('changePasswordValid error:', err);
-    res.redirect('/pageNotFound');
-  }
-};
+//   } catch (err) {
+//     console.error('changePasswordValid error:', err);
+//     res.redirect('/pageNotFound');
+//   }
+// };
 
 
-const verifyChangePassOtp = async (req, res) => {
-  try {
-    const enteredOtp = String(req.body.otp).trim();
-    const sessionOtp = String(req.session.userOtp).trim();
+// const verifyChangePassOtp = async (req, res) => {
+//   try {
+//     const enteredOtp = String(req.body.otp).trim();
+//     const sessionOtp = String(req.session.userOtp).trim();
 
-    console.log("Entered OTP:", enteredOtp);
-    console.log("Session OTP:", sessionOtp);
+//     console.log("Entered OTP:", enteredOtp);
+//     console.log("Session OTP:", sessionOtp);
 
-    if (enteredOtp === sessionOtp) {
-      res.json({ success: true, redirectUrl: '/reset-password' });
-    } else {
-      res.json({ success: false, message: 'OTP not matching' });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: 'An error occurred, please try again later' });
-  }
-};
+//     if (enteredOtp === sessionOtp) {
+//       res.json({ success: true, redirectUrl: '/reset-password' });
+//     } else {
+//       res.json({ success: false, message: 'OTP not matching' });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ success: false, message: 'An error occurred, please try again later' });
+//   }
+// };
 
 
 const getResetPasswordPage = async (req, res) => {
   try {
-    if (!req.session.email) {
-      return res.redirect('/changePassword');
-    }
+   
     res.render('reset-password'); 
   } catch (error) {
     res.redirect('/pageNotFound');
@@ -600,9 +644,9 @@ module.exports={
     verifyEmailOtp,
     updateEmail,
     getNewEmailPage,
-    changePassword,
-    changePasswordValid,
-    verifyChangePassOtp,
+    // changePassword,
+    // changePasswordValid,
+    // verifyChangePassOtp,
     getResetPasswordPage,
     getChangeNamePage,
     updateName,
