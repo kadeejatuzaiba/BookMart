@@ -111,6 +111,23 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ status:false, message:'Cart is empty.' });
     }
 
+    for (const i of cart.items) {
+  const product = i.productId;
+
+  if (!product.isListed || product.isBlocked || product.quantity <= 0) {
+    return res.status(400).json({
+      status: false,
+      message: `${product.productName} is out of stock`
+    });
+  }
+
+  if (i.quantity > product.quantity) {
+    return res.status(400).json({
+      status: false,
+      message: `Only ${product.quantity} left for ${product.productName}`
+    });
+  }
+}
     /* ───────── 1.  build orderedItems ───────── */
     const orderedItems = cart.items.map(i => ({
       product  : i.productId._id,
@@ -124,18 +141,17 @@ const placeOrder = async (req, res) => {
     const regularTotal = cart.items.reduce(
       (sum, i) => sum + i.quantity * i.productId.regularPrice, 0);
 
-    // sale price * qty (already contains product / category offer)
+
     const saleTotal    = cart.items.reduce(
       (sum, i) => sum + i.quantity * i.productId.salePrice , 0);
 
-       const offerDiscount   = regularTotal - saleTotal;          // product / category offer
-    const couponDiscount = req.session.discountAmount || 0;  // coupon in session
+       const offerDiscount   = regularTotal - saleTotal;          
+    const couponDiscount = req.session.discountAmount || 0;  
     const totalDiscount   = offerDiscount + couponDiscount;
 
     const totalPrice  = cart.items.reduce((sum, i) => sum + i.totalPrice, 0);
     const finalAmount = totalPrice + SHIPPING - couponDiscount;
 
-    // ❌ Restrict COD if order total is above ₹1000
 if (paymentMethod === 'Cash On Delivery' && finalAmount > 1000) {
   return res.status(400).json({ status: false, message: 'COD is only available for orders up to ₹1000.' });
 }
