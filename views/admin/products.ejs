@@ -77,10 +77,7 @@
         <% } else { %>
           <span class="badge bg-success"><%= p.quantity %></span>
         <% } %>
-<button class="btn btn-outline-secondary btn-sm"
-        onclick="editStock('<%= p._id %>')">
-  Edit Stock
-</button>
+
 
 
       </td>
@@ -128,62 +125,6 @@ function toggleLowStock() {
   if (lowOn)  url.searchParams.set('low', '1');
   else        url.searchParams.delete('low');
   window.location.href = url.toString();
-}
-
-async function editStock(productId, currentQty) {
-  const { value: newQty } = await Swal.fire({
-    title: 'Update Stock Quantity',
-    input: 'number',
-    inputLabel: 'Enter new stock value',
-    inputValue: currentQty,
-    inputAttributes: {
-      min: 0,
-      step: 1
-    },
-    showCancelButton: true,
-    confirmButtonText: 'Update',
-    cancelButtonText: 'Cancel',
-    inputValidator: (value) => {
-      if (!value || value < 0) {
-        return 'Please enter a valid quantity!';
-      }
-    }
-  });
-
-  if (newQty !== undefined) {
-    $.ajax({
-      url: '/admin/updatStock',  // ✅ Ensure correct spelling in route
-      method: 'POST',
-      contentType: 'application/json',
-      data: JSON.stringify({ id: productId, qty: newQty }),
-      success: function (response) {
-        if (response.ok) {
-          Swal.fire({
-            title: 'Success',
-            text: 'Stock updated successfully!',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          }).then(() => {
-            location.reload();
-          });
-        } else {
-          Swal.fire({
-            title: 'Failed',
-            text: response.msg || 'Could not update stock.',
-            icon: 'warning'
-          });
-        }
-      },
-      error: function () {
-        Swal.fire({
-          title: 'Error',
-          text: 'Server error while updating stock.',
-          icon: 'error'
-        });
-      }
-    });
-  }
 }
 
 /* ——— existing addOffer / removeOffer functions remain ——— */
