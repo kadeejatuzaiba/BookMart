@@ -256,45 +256,6 @@ const removeProduct = async (req, res) => {
   }
 };
 
-// const updateQuantity = async (req, res) => {
-//   try {
-//     const userId = req.session.user;
-//     const { itemId, action } = req.body;
-
-//     const cart = await Cart.findOne({ userId }).populate('items.productId');
-//     const item = cart.items.id(itemId);
-
-//     if (!item) return res.json({ success: false, message: 'Item not found' });
-
-//     const product = item.productId;
-
-//     if (!product || product.quantity === 0) {
-//       // Remove item if completely out of stock
-//       item.remove();
-//     } else if (action === 'increase') {
-//       if (item.quantity < product.quantity && item.quantity < 5) {
-//         item.quantity += 1;
-//       } else {
-//         // Set to max allowed
-//         const maxAllowed = Math.min(product.quantity, 5);
-//         item.quantity = maxAllowed;
-//       }
-//     } else if (action === 'decrease') {
-//       if (item.quantity > 1) {
-//         item.quantity -= 1;
-//       }
-//     }
-
-//     item.totalPrice = item.quantity * product.salePrice;
-//     await cart.save();
-
-//     res.json({ success: true, newQuantity: item.quantity, newTotalPrice: item.totalPrice ,cartTotal: cart.items.reduce((sum, i) => sum + i.totalPrice, 0)
-// });
-//   } catch (error) {
-//     console.error('Error in updateQuantity:', error);
-//     res.status(500).json({ success: false, message: 'Server Error' });
-//   }
-// };
 
 const updateQuantity = async (req, res) => {
   try {

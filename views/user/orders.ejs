@@ -31,7 +31,7 @@
         <div class="d-flex justify-content-between flex-wrap order-meta">
           <div><strong>ORDER PLACED</strong><br><%= new Date(order.createdOn).toDateString() %></div>
           <div><strong>TOTAL</strong><br>₹<%= order.finalAmount %></div>
-          <div><strong>ORDER&nbsp;ID</strong><br><%= order.orderId %></div>
+          <div><strong>ORDER&nbsp;ID</strong><br><%= order._id %></div>
           <div>
             <strong>STATUS</strong><br>
             <span class="badge

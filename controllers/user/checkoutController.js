@@ -289,11 +289,14 @@ if (req.session.appliedCoupon) {
 };
 
 
-
-const orderSuccess = (req, res) => {
+const orderSuccess = async (req, res) => {
   const orderId = req.query.orderId;
-  res.render('orderSuccess', { orderId });
+  const order = await Order.findById(orderId);
+  if (!order) return res.status(404).render('404', { message: 'Order not found' });
+
+  res.render('orderSuccess', { orderId: order._id });
 };
+
 
 
 const paymentFailure = async (req, res) => {

@@ -185,14 +185,12 @@ document.getElementById('productForm').addEventListener('submit', async function
 
       if (!input.files.length) return;
 
-  // ✅ Stop if already 3 images
   if (croppedBlobs.length >= 3) {
     Swal.fire("Limit Reached", "You can only upload exactly 3 images", "warning");
     input.value = "";
     return;
   }
-  
-  // ✅ Stop if trying to add more than 3
+
   if (croppedBlobs.length + input.files.length > 3) {
     Swal.fire("Limit Reached", "You can only upload exactly 3 images", "warning");
     input.value = "";
@@ -295,14 +293,6 @@ function validateForm() {
   const uploadedImages = document.getElementById('uploadInput').files;
   const existingImages = document.querySelectorAll('.thumbnail-wrapper img');
   const totalImages = uploadedImages.length + existingImages.length;
-
-  // if (totalImages < 3) {
-  //   document.getElementById("images-error").innerText = "At least 3 images are required";
-  //   isValid = false;
-  // } else {
-  //   document.getElementById("images-error").innerText = "";
-  // }
-
 
   
 if (totalImages !== 3) {

@@ -145,25 +145,6 @@ const resendOtp = async (req, res) => {
   }
 };
 
-// const postNewPassword=async(req,res)=>{
-//     try {
-//         const {newPass1,newPass2}=req.body;
-        
-//         const email=req.session.email;
-//         if(newPass1===newPass2){
-//             const passwordHash=await securePassword(newPass1)
-//             await User.updateOne(
-//                 {email:email},
-//                 {$set:{password:passwordHash}}
-//             )
-//             res.redirect('/login')
-//         }else{
-//             res.render('reset-password',{message:'passwords dod not match'})
-//         }
-//     } catch (error) {
-//         res.redirect('/pageNotFound')
-//     }
-// }
 
 const postNewPassword = async (req, res) => {
     try {
@@ -178,8 +159,6 @@ const postNewPassword = async (req, res) => {
                 return res.render('reset-password', { message: 'Passwords do not match' });
             }
 
-
-            console.log("Session userId:", req.session.userId);
 
 
             const passwordHash = await securePassword(newPass1);
@@ -251,8 +230,8 @@ const profileUpload = async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { $set: { image: filePath } },   // ✅ Use $set to avoid overwrite
-      { new: true }                    // ✅ Return updated document
+      { $set: { image: filePath } }, 
+      { new: true }                    
     );
 
     console.log("✅ Image path saved to DB:", updatedUser.image); // Check this
@@ -391,66 +370,31 @@ const updateEmail = async (req, res) => {
   }
 };
 
-// const changePassword=async(req,res)=>{
-//     try {
-//         res.render('reset-password')
-//     } catch (error) {
-//         res.redirect('/pageNotFound')
-//     }
-// }
+const showCurrentPassPage = (req, res) => {
+  res.render('changePassword', { message: null }); // render your EJS page
+};
 
+const validateCurrentPass = async (req, res) => {
+  try {
+    const userId = req.session.user; 
+    const { password } = req.body;
 
-// const changePasswordValid = async (req, res) => {
-//   try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.render("changePassword", { message: "User not found" });
+    }
 
-//     const email         = req.session.user.email;   
-//     const userExists    = await User.findOne({ email });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.render("changePassword", { message: "Incorrect current password" });
+    }
 
-//     if (!userExists) {
-//       return res.render('change-password', {
-//         message: 'User not found. Please login again.'
-//       });
-//     }
-
-//     const otp        = generateOtp();
-//     const emailSent  = await sendVerificationEmail(email, otp);
-
-//     if (!emailSent) {
-//       return res.render('change-password', {
-//         message: 'Unable to send OTP. Please try again.'
-//       });
-//     }
-//     req.session.userOtp = otp;
-//     req.session.email   = email;     
-//     res.render('change-password-otp');
-//     console.log('OTP for password change:', otp);
-
-//   } catch (err) {
-//     console.error('changePasswordValid error:', err);
-//     res.redirect('/pageNotFound');
-//   }
-// };
-
-
-// const verifyChangePassOtp = async (req, res) => {
-//   try {
-//     const enteredOtp = String(req.body.otp).trim();
-//     const sessionOtp = String(req.session.userOtp).trim();
-
-//     console.log("Entered OTP:", enteredOtp);
-//     console.log("Session OTP:", sessionOtp);
-
-//     if (enteredOtp === sessionOtp) {
-//       res.json({ success: true, redirectUrl: '/reset-password' });
-//     } else {
-//       res.json({ success: false, message: 'OTP not matching' });
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ success: false, message: 'An error occurred, please try again later' });
-//   }
-// };
-
+    return res.redirect("/reset-password");
+  } catch (error) {
+    console.error(error);
+    return res.render("changePassword", { message: "Internal server error" });
+  }
+};
 
 const getResetPasswordPage = async (req, res) => {
   try {
@@ -644,9 +588,8 @@ module.exports={
     verifyEmailOtp,
     updateEmail,
     getNewEmailPage,
-    // changePassword,
-    // changePasswordValid,
-    // verifyChangePassOtp,
+    showCurrentPassPage,
+    validateCurrentPass,
     getResetPasswordPage,
     getChangeNamePage,
     updateName,

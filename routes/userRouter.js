@@ -71,6 +71,10 @@ router.post('/changeEmail',userAuth,profileController.changeEmailValid)
 router.post('/verifyEmailOtp',userAuth,profileController.verifyEmailOtp)
 router.get('/updateEmail',userAuth,profileController.getNewEmailPage);
 router.post('/updateEmail',userAuth,profileController.updateEmail)
+
+router.get('/validate-pass', userAuth, profileController.showCurrentPassPage);
+
+router.post("/validate-current-password",userAuth, profileController.validateCurrentPass);
 router.get('/reset-password', userAuth, profileController.getResetPasswordPage);
 router.get('/change-name', userAuth, profileController.getChangeNamePage);
 router.post('/change-name', userAuth, profileController.updateName);
